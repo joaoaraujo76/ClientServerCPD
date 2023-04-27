@@ -3,7 +3,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Register {
 
-    public static void newUser(String username, String password) {
+    public static boolean newUser(String username, String password) {
         try {
             FileWriter fileWriter = new FileWriter("users.txt", true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -11,17 +11,20 @@ public class Register {
 
             // Verificar se o usuário já existe no arquivo
             if (verifyUser(username)) {
-                System.out.println("Erro: Já existe um usuário com esse nome de usuário.");
+                printWriter.close();
+                return false;
             } else {
                 // Registrar o usuário no arquivo
                 String hashedPassword = Hashing.hashPassword(password);
                 printWriter.println(username + "," + hashedPassword);
-                System.out.println("Usuário registrado com sucesso!");
+                printWriter.close();
+                return true;
             }
 
-            printWriter.close();
+
         } catch (IOException | NoSuchAlgorithmException e) {
             System.out.println("Erro ao registrar usuário: " + e.getMessage());
+            return false;
         }
     }
     public static boolean verifyUser(String username) {

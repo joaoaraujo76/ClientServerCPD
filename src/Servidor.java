@@ -22,63 +22,21 @@ public class Servidor {
                 OutputStream output = socket.getOutputStream();
                 PrintWriter writer = new PrintWriter(output, true);
 
-                String option = reader.readLine();
-
                 String username = null;
                 String password = null;
                 boolean authenticated = false;
                 boolean tryLogin = false;
+                String option;
 
-                if (option.equals("login")) {
-                    System.out.println("Login -----------");
-                    username = reader.readLine();
-                    System.out.println("Username: " + username);
-                    password = reader.readLine();
-                    System.out.println("Password: " + Hashing.hashPassword(password));
-                    authenticated = authenticate(username, password);
-                    tryLogin = true;
-                }
-
-                // Se o cliente deseja registrar uma nova conta, solicita o nome de usuário e a senha
-                else {
-                    System.out.println("Register -----------");
-                    username = reader.readLine();
-                    System.out.println("Username: " + username);
-                    password = reader.readLine();
-                    System.out.println("Password: " + Hashing.hashPassword(password));
-                    if (register(username, password)) {
-                        System.out.println("Register succeeded");
-                        writer.println("Registration succeeded. Please login to your account.");
-                    } else {
-                        System.out.println("Registration failed");
-                        writer.println("Registration failed. Username already exists.");
-                    }
-                }
-
-                while (!authenticated) {
+                do {
                     System.out.println("\n");
-                    if(tryLogin){
+                    if (tryLogin) {
                         writer.println("Authentication failed. Please try again or register a new account (r).");
                     }
+
                     option = reader.readLine();
 
-                    if (option.equals("register")) {
-                        tryLogin = false;
-                        System.out.println("Register -----------");
-                        username = reader.readLine();
-                        System.out.println("Username: " + username);
-                        password = reader.readLine();
-                        System.out.println("Password: " + Hashing.hashPassword(password));
-                        if (register(username, password)) {
-                            System.out.println("Registration succeeded");
-                            writer.println("Registration succeeded. Please login to your account.");
-                        }
-                        else {
-                            System.out.println("Registration Failed");
-                            writer.println("Registration failed. Username already exists.");
-                        }
-                    }
-                    else {
+                    if (option.equals("login")) {
                         tryLogin = true;
                         System.out.println("Login -----------");
                         username = reader.readLine();
@@ -90,16 +48,39 @@ public class Servidor {
                             System.out.println("Authenticated failed");
                         }
                     }
-                }
+                    else if (option.equals("register")) {
+                        tryLogin = false;
+                        System.out.println("Register -----------");
+                        username = reader.readLine();
+                        System.out.println("Username: " + username);
+                        password = reader.readLine();
+                        System.out.println("Password: " + Hashing.hashPassword(password));
+                        if (register(username, password)) {
+                            System.out.println("Registration succeeded");
+                            writer.println("Registration succeeded. Please login to your account.");
+                        }
+                        else {
+                            System.out.println("Registration failed");
+                            writer.println("Registration failed. Username already exists.");
+                        }
+                    }
+                    else {
+                        System.out.println("Invalid option. Please try again.");
+                    }
+
+                } while (!authenticated);
 
                 System.out.println("Authenticated succeded");
                 writer.println("Authentication succeeded.");
                 System.out.println("\nClient authenticated: " + username);
             }
 
-        } catch (IOException | NoSuchAlgorithmException ex) {
-            System.out.println("Server exception: " + ex.getMessage());
-            ex.printStackTrace();
+        } catch (SocketException ex) {
+            System.out.println("A conexão com o cliente foi interrompida.");
+        } catch (IOException ex) {
+            System.out.println("Ocorreu uma exceção de IO: " + ex.getMessage());
+        } catch (NoSuchAlgorithmException ex) {
+            System.out.println("Ocorreu uma exceção de algoritmo de hashing: " + ex.getMessage());
         }
     }
 

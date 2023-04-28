@@ -23,18 +23,42 @@ public class Cliente {
             boolean authenticated = false;
 
             do {
-                System.out.print("Username: ");
-                String username = scanner.nextLine();
-                writer.println(username);
+                System.out.print("\nDo you want to register or login? (r/l) ");
+                String option = scanner.nextLine();
+                if (option.equals("r")) {
+                    writer.println("register");
 
-                System.out.print("Password: ");
-                String password = scanner.nextLine();
-                writer.println(password);
+                    System.out.println("Register -----------");
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+                    writer.println(username);
 
-                String authResult = reader.readLine();
-                System.out.println(authResult);
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+                    writer.println(password);
 
-                authenticated = authResult.equals("Authentication succeeded.");
+                    String authResult = reader.readLine();
+                    System.out.println(authResult);
+                }
+                else if (option.equals("l")) {
+                    writer.println("login");
+
+                    System.out.println("Login -----------");
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+                    writer.println(username);
+
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+                    writer.println(password);
+
+                    String authResult = reader.readLine();
+                    System.out.println(authResult);
+                    authenticated = authResult.equals("Authentication succeeded.");
+                }
+                else {
+                    System.out.println("Invalid option. Please try again.");
+                }
 
             } while (!authenticated);
 

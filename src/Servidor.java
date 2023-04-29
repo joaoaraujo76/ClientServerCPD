@@ -1,12 +1,12 @@
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 import java.util.concurrent.*;
 import java.security.NoSuchAlgorithmException;
 
 public class Servidor {
 
     private static int port;
-    private static ExecutorService executor = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
         if (args.length < 1) return;
@@ -18,12 +18,7 @@ public class Servidor {
             System.out.println("Server is listening on port " + port +"\n") ;
 
             while (true) {
-                /*
-                  //serverSocket().accept() is blocking, which means that the server waits for a connection before moving on.
-                  Socket clientSocket = serverSocket.accept();
-                  System.out.println("Client connected from " + clientSocket.getInetAddress());
-                  executor.submit(new ClientHandler(clientSocket));
-                */
+
                 Socket socket = serverSocket.accept();
 
                 InputStream input = socket.getInputStream();
@@ -32,53 +27,80 @@ public class Servidor {
                 OutputStream output = socket.getOutputStream();
                 PrintWriter writer = new PrintWriter(output, true);
 
+                String tokenClient = reader.readLine();
+                System.out.println(tokenClient);
+
+                boolean validToken = false;
                 String username = null;
-                String password = null;
-                boolean authenticated = false;
-                boolean tryLogin = false;
-                String option;
 
-                do {
-                    System.out.println("\n");
-                    if (tryLogin) {
-                        writer.println("Authentication failed. Please try again or register a new account (r).");
-                    }
-
-                    option = reader.readLine();
-
-                    if (option.equals("login")) {
-                        tryLogin = true;
-                        System.out.println("Login -----------");
-                        username = reader.readLine();
-                        System.out.println("Username: " + username);
-                        password = reader.readLine();
-                        System.out.println("Password: " + Hashing.hashPassword(password));
-                        authenticated = authenticate(username, password);
-                        if (!authenticated) {
-                            System.out.println("Authenticated failed");
-                        }
-                    }
-                    else if (option.equals("register")) {
-                        tryLogin = false;
-                        System.out.println("Register -----------");
-                        username = reader.readLine();
-                        System.out.println("Username: " + username);
-                        password = reader.readLine();
-                        System.out.println("Password: " + Hashing.hashPassword(password));
-                        if (register(username, password)) {
-                            System.out.println("Registration succeeded");
-                            writer.println("Registration succeeded. Please login to your account.");
-                        }
-                        else {
-                            System.out.println("Registration failed");
-                            writer.println("Registration failed. Username already exists.");
-                        }
+                if (!tokenClient.equals("null")){
+                    username = findUserByToken(tokenClient);
+                    if (!username.equals("null")) {
+                        validToken = true;
                     }
                     else {
-                        System.out.println("Invalid option. Please try again.");
+                        username = null;
                     }
+                }
 
-                } while (!authenticated);
+                if(username == null){
+                    writer.println("Token unauthorized");
+                }
+
+                else{
+                    writer.println("Token authorized");
+                }
+
+                if(!validToken) {
+
+                    String password = null;
+                    boolean authenticated = false;
+                    boolean tryLogin = false;
+                    String option;
+
+                    do {
+                        System.out.println("\n");
+                        if (tryLogin) {
+                            writer.println("Authentication failed. Please try again or register a new account (r).");
+                        }
+
+                        option = reader.readLine();
+
+                        if (option.equals("login")) {
+                            tryLogin = true;
+                            System.out.println("Login -----------");
+                            username = reader.readLine();
+                            System.out.println("Username: " + username);
+                            password = reader.readLine();
+                            System.out.println("Password: " + Hashing.hashPassword(password));
+                            authenticated = authenticate(username, password);
+                            if (!authenticated) {
+                                System.out.println("Authenticated failed");
+                            }
+                        }
+                        else if (option.equals("register")) {
+                            tryLogin = false;
+                            System.out.println("Register -----------");
+                            username = reader.readLine();
+                            System.out.println("Username: " + username);
+                            password = reader.readLine();
+                            System.out.println("Password: " + Hashing.hashPassword(password));
+                            if (register(username, password)) {
+                                System.out.println("Registration succeeded");
+                                writer.println("Registration succeeded. Please login to your account.");
+                            }
+                            else {
+                                System.out.println("Registration failed");
+                                writer.println("Registration failed. Username already exists.");
+                            }
+                        }
+                        else {
+                            System.out.println("Invalid option. Please try again.");
+                        }
+
+                    } while (!authenticated);
+
+                }
 
                 System.out.println("Authenticated succeded");
                 writer.println("Authentication succeeded.");
@@ -100,5 +122,24 @@ public class Servidor {
 
     private static boolean register(String username, String password) {
         return Register.newUser(username, password);
+    }
+
+    public static String findUserByToken(String token) {
+        String result = null;
+        try {
+            Scanner scanner = new Scanner(new File("users.txt"));
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] fields = line.split(",");
+                if (fields.length == 4 && fields[2].equals(token)) {
+                    result = fields[0];
+                    break;
+                }
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

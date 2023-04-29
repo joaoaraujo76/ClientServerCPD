@@ -18,49 +18,60 @@ public class Cliente {
             OutputStream output = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(output, true);
 
+            System.out.println("Bem Vindo!");
+
             Scanner scanner = new Scanner(System.in);
 
-            boolean authenticated = false;
+            String token = getClientToken(); //Token do cliente
+            writer.println(token); //Envia token para o servidor
+            String validToken = reader.readLine(); //Resposta do servidor pra ver se o token é valido
 
-            do {
-                System.out.print("\nDo you want to register or login? (r/l) ");
-                String option = scanner.nextLine();
-                if (option.equals("r")) {
-                    writer.println("register");
+            if (validToken.equals("Token authorized")){
+                System.out.println("Authentication succeeded.");
+            }
 
-                    System.out.println("Register -----------");
-                    System.out.print("Username: ");
-                    String username = scanner.nextLine();
-                    writer.println(username);
+            else{
+                boolean authenticated = false;
+                do {
+                    System.out.print("\nDo you want to register or login? (r/l) ");
+                    String option = scanner.nextLine();
+                    if (option.equals("r")) {
+                        writer.println("register");
 
-                    System.out.print("Password: ");
-                    String password = scanner.nextLine();
-                    writer.println(password);
+                        System.out.println("Register -----------");
+                        System.out.print("Username: ");
+                        String username = scanner.nextLine();
+                        writer.println(username);
 
-                    String authResult = reader.readLine();
-                    System.out.println(authResult);
-                }
-                else if (option.equals("l")) {
-                    writer.println("login");
+                        System.out.print("Password: ");
+                        String password = scanner.nextLine();
+                        writer.println(password);
 
-                    System.out.println("Login -----------");
-                    System.out.print("Username: ");
-                    String username = scanner.nextLine();
-                    writer.println(username);
+                        String authResult = reader.readLine();
+                        System.out.println(authResult);
+                    } else if (option.equals("l")) {
+                        writer.println("login");
 
-                    System.out.print("Password: ");
-                    String password = scanner.nextLine();
-                    writer.println(password);
+                        System.out.println("Login -----------");
+                        System.out.print("Username: ");
+                        String username = scanner.nextLine();
+                        writer.println(username);
 
-                    String authResult = reader.readLine();
-                    System.out.println(authResult);
-                    authenticated = authResult.equals("Authentication succeeded.");
-                }
-                else {
-                    System.out.println("Invalid option. Please try again.");
-                }
+                        System.out.print("Password: ");
+                        String password = scanner.nextLine();
+                        writer.println(password);
 
-            } while (!authenticated);
+                        String authResult = reader.readLine();
+                        System.out.println(authResult);
+                        authenticated = authResult.equals("Authentication succeeded.");
+                    } else {
+                        System.out.println("Invalid option. Please try again.");
+                    }
+
+                } while (!authenticated);
+            }
+
+
 
         } catch (UnknownHostException ex) {
 
@@ -70,5 +81,27 @@ public class Cliente {
 
             System.out.println("I/O error: " + ex.getMessage());
         }
+    }
+
+    public static String getClientToken() {
+        String Token = null;
+        File file = new File("token.txt");
+        if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line = br.readLine();
+                if (line != null) {
+                    System.out.println("Token: " + line);
+                    Token = line;
+                } else {
+                    System.out.println("O arquivo está vazio.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            System.out.println("O arquivo token.txt não existe na pasta atual.");
+        }
+        return Token;
     }
 }

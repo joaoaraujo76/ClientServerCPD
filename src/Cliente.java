@@ -69,6 +69,9 @@ public class Cliente {
                     }
 
                 } while (!authenticated);
+
+                String newToken = reader.readLine();
+                updateToken(newToken);
             }
 
 
@@ -90,7 +93,6 @@ public class Cliente {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line = br.readLine();
                 if (line != null) {
-                    System.out.println("Token: " + line);
                     Token = line;
                 } else {
                     System.out.println("O arquivo está vazio.");
@@ -100,8 +102,26 @@ public class Cliente {
             }
         }
         else {
-            System.out.println("O arquivo token.txt não existe na pasta atual.");
+            System.out.println("O arquivo de token não existe na pasta atual.");
         }
         return Token;
+    }
+
+    public static void updateToken(String newToken) {
+        try {
+            File file = new File("token.txt");
+            if (file.exists()) {
+                FileWriter writer = new FileWriter(file);
+                writer.write(newToken);
+                writer.close();
+            } else {
+                file.createNewFile();
+                FileWriter writer = new FileWriter(file);
+                writer.write(newToken);
+                writer.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

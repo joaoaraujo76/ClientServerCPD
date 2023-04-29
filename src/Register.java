@@ -16,7 +16,7 @@ public class Register {
             } else {
                 // Registrar o usuário no arquivo
                 String hashedPassword = Hashing.hashPassword(password);
-                printWriter.println(username + "," + hashedPassword);
+                printWriter.println(username + "," + hashedPassword + ",null" + ",null");
                 printWriter.close();
                 return true;
             }
@@ -34,11 +34,11 @@ public class Register {
 
             String linha;
             while ((linha = bufferedReader.readLine()) != null) {
-                String[] partes = linha.split(",");
-                String nomeUsuario = partes[0];
+                String[] fields = linha.split(",");
+                String userId = fields[0];
 
                 // Verificar se o username de usuário já existe no arquivo
-                if (nomeUsuario.equals(username)) {
+                if (userId.equals(username)) {
                     bufferedReader.close();
                     return true;
                 }

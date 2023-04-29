@@ -1,5 +1,8 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.*;
 import java.security.NoSuchAlgorithmException;
@@ -28,14 +31,14 @@ public class Servidor {
                 PrintWriter writer = new PrintWriter(output, true);
 
                 String tokenClient = reader.readLine();
-                System.out.println(tokenClient);
+                System.out.println("Token received: " + tokenClient);
 
                 boolean validToken = false;
                 String username = null;
 
                 if (!tokenClient.equals("null")){
                     username = findUserByToken(tokenClient);
-                    if (!username.equals("null")) {
+                    if (!(username == null)) {
                         validToken = true;
                     }
                     else {
@@ -77,6 +80,10 @@ public class Servidor {
                             if (!authenticated) {
                                 System.out.println("Authenticated failed");
                             }
+                            else {
+                                System.out.println("Authenticated succeded\n");
+                                writer.println("Authentication succeeded.");
+                            }
                         }
                         else if (option.equals("register")) {
                             tryLogin = false;
@@ -100,11 +107,12 @@ public class Servidor {
 
                     } while (!authenticated);
 
+                    String newToken = generateRandomToken();
+                    updateTokenByUsername(username,newToken);
+                    writer.println(newToken);
                 }
 
-                System.out.println("Authenticated succeded");
-                writer.println("Authentication succeeded.");
-                System.out.println("\nClient authenticated: " + username);
+                System.out.println("Client authenticated: " + username + "\n");
             }
 
         } catch (SocketException ex) {
@@ -141,5 +149,48 @@ public class Servidor {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static String generateRandomToken() {
+        Random random = new Random();
+        int randomInt = random.nextInt();
+        String hexString = Integer.toHexString(randomInt);
+        return hexString;
+    }
+
+
+    public static void updateTokenByUsername(String username, String newToken) {
+        try {
+            File file = new File("users.txt");
+            Scanner scanner = new Scanner(file);
+
+            List<String> updatedUsers = new ArrayList<>();
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] fields = line.split(",");
+
+                if (fields[0].equals(username)) {
+                    // Atualizar o token do usuário com o novo valor
+                    fields[2] = newToken;
+                    line = String.join(",", fields);
+                }
+
+                updatedUsers.add(line);
+            }
+
+            scanner.close();
+
+            FileWriter writer = new FileWriter(file);
+
+            for (String line : updatedUsers) {
+                writer.write(line + "\n");
+            }
+
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

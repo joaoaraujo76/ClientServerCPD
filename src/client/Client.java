@@ -1,8 +1,11 @@
+package client;
+
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Cliente {
+public class Client {
 
     public static void main(String[] args) {
         if (args.length < 2) return;
@@ -52,7 +55,7 @@ public class Cliente {
                     } else if (option.equals("l")) {
                         writer.println("login");
 
-                        System.out.println("Login -----------");
+                        System.out.println("server.Login -----------");
                         System.out.print("Username: ");
                         String username = scanner.nextLine();
                         writer.println(username);
@@ -73,9 +76,6 @@ public class Cliente {
                 String newToken = reader.readLine();
                 updateToken(newToken);
             }
-
-
-
         } catch (UnknownHostException ex) {
 
             System.out.println("Server not found: " + ex.getMessage());

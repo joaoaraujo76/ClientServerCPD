@@ -1,6 +1,10 @@
+package server;
+
+import server.services.UserAuthenticator;
+
 import java.net.*;
 import java.io.*;
-import java.util.concurrent.*;
+
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
 
@@ -35,6 +39,6 @@ public class ClientHandler implements Runnable {
     }
 
     private static boolean authenticate(String username, String password) {
-        return Login.verify(username,password);
+        return UserAuthenticator.login(username,password);
     }
 }

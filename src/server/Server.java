@@ -115,8 +115,6 @@ public class Server {
 
                     String newToken = generateRandomToken();
                     updateTokenByUsername(username, newToken);
-                    UsersRepository.getUserByName(username).ifPresent(u ->
-                            u.setToken(newToken));
                     writer.println(newToken);
                 }
                 userOptional.ifPresent(u ->
@@ -143,6 +141,10 @@ public class Server {
 
     private static void updateTokenByUsername(String username, String newToken) throws IOException, ParseException {
         try {
+            long nowInMillis = System.currentTimeMillis();
+            long sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000L;
+            long sevenDaysFromNowInMillis = nowInMillis + sevenDaysInMillis;
+
             File file = new File("data/users.txt");
             Scanner scanner = new Scanner(file);
 
@@ -153,11 +155,10 @@ public class Server {
                 String[] fields = line.split(",");
 
                 if (fields[0].equals(username)) {
-                    // Atualizar o token do usuário com o novo valor
                     fields[2] = newToken;
+                    fields[3] = String.valueOf(sevenDaysFromNowInMillis);
                     line = String.join(",", fields);
                 }
-
                 updatedUsers.add(line);
             }
 
@@ -170,6 +171,11 @@ public class Server {
             }
 
             writer.close();
+
+            UsersRepository.getUserByName(username).ifPresent(u ->
+                    u.setToken(newToken));
+            UsersRepository.getUserByName(username).ifPresent(u ->
+                    u.setExpiryDateToken(sevenDaysFromNowInMillis));
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,15 +1,14 @@
 package server.models;
 
-import java.util.Date;
 import java.util.Objects;
 
 public class User {
     private final String username;
     private String hashedPassword;
     private String token;
-    private Date expiryDateToken;
+    private long expiryDateToken;
 
-    public User(String username, String hashedPassword, String token, Date expiryDateToken) {
+    public User(String username, String hashedPassword, String token, long expiryDateToken) {
         this.username = username;
         this.hashedPassword = hashedPassword;
         this.token = token;
@@ -34,11 +33,11 @@ public class User {
 
     public void setToken(String token) { this.token = token; }
 
-    public Date getExpiryDateToken() {
+    public long getExpiryDateToken() {
         return expiryDateToken;
     }
 
-    public void setExpiryDateToken(Date expiryDateToken) {
+    public void setExpiryDateToken(long expiryDateToken) {
         this.expiryDateToken = expiryDateToken;
     }
 

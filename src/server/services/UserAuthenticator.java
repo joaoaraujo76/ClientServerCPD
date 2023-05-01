@@ -24,7 +24,7 @@ public class UserAuthenticator implements Authenticator{
     }
 
     public static boolean register(String username, String password) throws NoSuchAlgorithmException, IOException, ParseException {
-        return UsersRepository.addUser(new User(username, hashPassword(password), null, null));
+        return UsersRepository.addUser(new User(username, hashPassword(password), null, -1));
     }
 
     private static String hashPassword(String password) throws NoSuchAlgorithmException {

@@ -1,5 +1,7 @@
 package server.services;
 
+import server.models.User;
+
 public interface Authenticator {
 
     static boolean login(String username, String password) {
@@ -12,5 +14,9 @@ public interface Authenticator {
 
     private static String hashPassword(String password) {
         return null;
+    }
+
+    static boolean validToken(User user, String token) {
+        return false;
     }
 }

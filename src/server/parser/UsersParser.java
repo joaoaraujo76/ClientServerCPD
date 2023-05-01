@@ -12,6 +12,7 @@ public class UsersParser implements Parser {
     public static void parse() throws IOException, ParseException {
         FileReader fileReader = new FileReader("data/users.txt");
         BufferedReader bufferedReader = new BufferedReader(fileReader);
+        UsersRepository.getUserList().clear();
 
         String line;
         while ((line = bufferedReader.readLine()) != null) {

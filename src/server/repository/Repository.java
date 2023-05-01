@@ -5,7 +5,6 @@ import server.models.User;
 import java.util.Optional;
 import java.util.Set;
 
-@SuppressWarnings("unused")
 public interface Repository<T> {
     static <T> Set<T> getUserList() {
         return null;
@@ -22,4 +21,6 @@ public interface Repository<T> {
     static boolean addUser(User user) {
         return false;
     }
+
+    static void invalidateTokenByUsername(String username) { }
 }

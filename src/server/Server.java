@@ -15,21 +15,19 @@ import java.util.*;
 
 public class Server {
 
-    private static int port;
-
     public static void main(String[] args) {
         if (args.length < 1) return;
 
-        port = Integer.parseInt(args[0]);
+        int port = Integer.parseInt(args[0]);
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
 
             System.out.println("Server is listening on port " + port +"\n") ;
 
             while (true) {
-                UsersParser.parse();
-
                 Socket socket = serverSocket.accept();
+
+                UsersParser.parse();
 
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -48,17 +46,17 @@ public class Server {
                 if (!tokenClient.equals("null")){
                     if (userOptional.isPresent()) {
                         User user = userOptional.get();
-                        if (!(user.getToken() == null)) {
+                        if (UserAuthenticator.validToken(user, tokenClient)) {
                             validToken = true;
                         }
                     }
                 }
 
-                if(!userOptional.isPresent()){
+                if(userOptional.isEmpty() || !validToken){
                     writer.println("Token unauthorized");
                 }
 
-                else{
+                if (validToken){
                     writer.println("Token authorized");
                 }
 
@@ -125,9 +123,7 @@ public class Server {
             System.out.println("A conexão com o cliente foi interrompida.");
         } catch (IOException ex) {
             System.out.println("Ocorreu uma exceção de IO: " + ex.getMessage());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (NoSuchAlgorithmException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -135,8 +131,7 @@ public class Server {
     private static String generateRandomToken() {
         Random random = new Random();
         int randomInt = random.nextInt();
-        String hexString = Integer.toHexString(randomInt);
-        return hexString;
+        return Integer.toHexString(randomInt);
     }
 
     private static void updateTokenByUsername(String username, String newToken) throws IOException, ParseException {

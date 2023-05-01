@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Optional;
 
-public class UserAuthenticator implements Authenticator{
+public class UserAuthenticator implements Authenticator {
 
     public static boolean login(String username, String password) {
         Optional<User> user = UsersRepository.getUserByName(username);
@@ -35,5 +35,14 @@ public class UserAuthenticator implements Authenticator{
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
+    }
+
+    public static boolean validToken(User user, String token) throws IOException, ParseException {
+        if (user.getToken().equals(token) && user.getExpiryDateToken() > System.currentTimeMillis()) {
+            return true;
+        } else {
+            UsersRepository.invalidateTokenByUsername(user.getUsername());
+            return false;
+        }
     }
 }

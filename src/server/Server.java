@@ -11,8 +11,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.text.ParseException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 public class Server {
 
@@ -42,19 +41,20 @@ public class Server {
                 System.out.println("Token received: " + tokenClient);
 
                 boolean validToken = false;
-                Optional<User> user = null;
+
+                Optional<User> userOptional = UsersRepository.getUserByToken(tokenClient);
+                String username = null;
 
                 if (!tokenClient.equals("null")){
-                    user = UsersRepository.getUserByToken(tokenClient);
-                    if (!(user.get().getToken() == null)) {
-                        validToken = true;
-                    }
-                    else {
-                        user = null;
+                    if (userOptional.isPresent()) {
+                        User user = userOptional.get();
+                        if (!(user.getToken() == null)) {
+                            validToken = true;
+                        }
                     }
                 }
 
-                if(user.get().getToken() == null){
+                if(!userOptional.isPresent()){
                     writer.println("Token unauthorized");
                 }
 
@@ -64,7 +64,7 @@ public class Server {
 
                 if(!validToken) {
 
-                    String password = null;
+                    String password;
                     boolean authenticated = false;
                     boolean tryLogin = false;
                     String option;
@@ -80,7 +80,7 @@ public class Server {
                         if (option.equals("login")) {
                             tryLogin = true;
                             System.out.println("server.Login -----------");
-                            String username = reader.readLine();
+                            username = reader.readLine();
                             System.out.println("Username: " + username);
                             password = reader.readLine();
                             authenticated = UserAuthenticator.login(username, password);
@@ -95,7 +95,7 @@ public class Server {
                         else if (option.equals("register")) {
                             tryLogin = false;
                             System.out.println("Register -----------");
-                            String username = reader.readLine();
+                            username = reader.readLine();
                             System.out.println("Username: " + username);
                             password = reader.readLine();
                             if (UserAuthenticator.register(username, password)) {
@@ -114,12 +114,13 @@ public class Server {
                     } while (!authenticated);
 
                     String newToken = generateRandomToken();
-                    user.ifPresent(u ->
+                    updateTokenByUsername(username, newToken);
+                    UsersRepository.getUserByName(username).ifPresent(u ->
                             u.setToken(newToken));
                     writer.println(newToken);
                 }
-
-                System.out.println("Client authenticated: " + user.get().getUsername() + "\n");
+                userOptional.ifPresent(u ->
+                        System.out.println("Client authenticated: " + u.getUsername() + "\n"));
             }
 
         } catch (SocketException ex) {
@@ -138,5 +139,40 @@ public class Server {
         int randomInt = random.nextInt();
         String hexString = Integer.toHexString(randomInt);
         return hexString;
+    }
+
+    private static void updateTokenByUsername(String username, String newToken) throws IOException, ParseException {
+        try {
+            File file = new File("data/users.txt");
+            Scanner scanner = new Scanner(file);
+
+            List<String> updatedUsers = new ArrayList<>();
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] fields = line.split(",");
+
+                if (fields[0].equals(username)) {
+                    // Atualizar o token do usuário com o novo valor
+                    fields[2] = newToken;
+                    line = String.join(",", fields);
+                }
+
+                updatedUsers.add(line);
+            }
+
+            scanner.close();
+
+            FileWriter writer = new FileWriter(file);
+
+            for (String line : updatedUsers) {
+                writer.write(line + "\n");
+            }
+
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

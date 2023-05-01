@@ -2,11 +2,12 @@ package server.repository;
 
 import server.models.User;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 public class UsersRepository {
-    private static Set<User> userList;
+    private static Set<User> userList = new HashSet<>();
 
     public static Set<User> getUserList() {
         return userList;

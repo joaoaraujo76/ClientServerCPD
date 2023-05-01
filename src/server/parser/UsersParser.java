@@ -14,7 +14,7 @@ public class UsersParser implements Parser {
     public static void parse() throws IOException, ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-        FileReader fileReader = new FileReader("../data/users.txt");
+        FileReader fileReader = new FileReader("data/users.txt");
         BufferedReader bufferedReader = new BufferedReader(fileReader);
 
         String line;

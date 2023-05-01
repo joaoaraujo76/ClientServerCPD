@@ -35,7 +35,7 @@ public class UsersRepository implements Repository<User> {
     public static boolean addUser(User user) throws IOException {
         if (UsersRepository.getUserList().add(user)) {
             try (FileWriter fileWriter = new FileWriter("data/users.txt", true)) {
-                fileWriter.write(user.getUsername() + "," + user.getHashedPassword() + "," + user.getToken() + "," + user.getExpiryDateToken());
+                fileWriter.write(user.getUsername() + "," + user.getHashedPassword() + "," + user.getToken() + "," + user.getExpiryDateToken() + "\n");
             }
             return true;
         }

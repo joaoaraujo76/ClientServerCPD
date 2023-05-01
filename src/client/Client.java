@@ -55,7 +55,7 @@ public class Client {
                     } else if (option.equals("l")) {
                         writer.println("login");
 
-                        System.out.println("server.Login -----------");
+                        System.out.println("Login -----------");
                         System.out.print("Username: ");
                         String username = scanner.nextLine();
                         writer.println(username);

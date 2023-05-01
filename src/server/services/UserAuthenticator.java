@@ -1,10 +1,8 @@
 package server.services;
 
-import server.parser.UsersParser;
 import server.repository.UsersRepository;
 import server.models.User;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,18 +24,7 @@ public class UserAuthenticator implements Authenticator{
     }
 
     public static boolean register(String username, String password) throws NoSuchAlgorithmException, IOException, ParseException {
-
-
-        if (UsersRepository.getUserList().add(new User(username, hashPassword(password), null, null))) {
-            try (FileWriter fileWriter = new FileWriter("data/users.txt", true)) {
-                fileWriter.append("\n" + username + "," + hashPassword(password) + ",null" + ",25/12/2030");
-                UsersParser.parse();
-                return true;
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-        return false;
+        return UsersRepository.addUser(new User(username, hashPassword(password), null, null));
     }
 
     private static String hashPassword(String password) throws NoSuchAlgorithmException {

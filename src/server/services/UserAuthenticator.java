@@ -23,7 +23,7 @@ public class UserAuthenticator implements Authenticator {
         }).isPresent();
     }
 
-    public static boolean register(String username, String password) throws NoSuchAlgorithmException, IOException, ParseException {
+    public static boolean register(String username, String password) throws IOException, NoSuchAlgorithmException {
         return UsersRepository.addUser(new User(username, hashPassword(password), null, -1));
     }
 
@@ -37,7 +37,7 @@ public class UserAuthenticator implements Authenticator {
         return sb.toString();
     }
 
-    public static boolean validToken(User user, String token) throws IOException, ParseException {
+    public static boolean validToken(User user, String token) throws IOException{
         if (user.getToken().equals(token) && user.getExpiryDateToken() > System.currentTimeMillis()) {
             return true;
         } else {

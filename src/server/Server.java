@@ -9,171 +9,36 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.text.ParseException;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.*;
+
 
 public class Server {
+
+    private static int port;
+    private static ExecutorService executor = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
         if (args.length < 1) return;
 
-        int port = Integer.parseInt(args[0]);
+        port = Integer.parseInt(args[0]);
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
 
             System.out.println("Server is listening on port " + port +"\n") ;
 
             while (true) {
-                Socket socket = serverSocket.accept();
+                //serverSocket().accept() is blocking, which means that the server waits for a connection before moving on.
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected from " + clientSocket.getInetAddress());
 
-                UsersParser.parse();
-
-                InputStream input = socket.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-                OutputStream output = socket.getOutputStream();
-                PrintWriter writer = new PrintWriter(output, true);
-
-                String tokenClient = reader.readLine();
-                System.out.println("Token received: " + tokenClient);
-
-                boolean validToken = false;
-
-                Optional<User> userOptional = UsersRepository.getUserByToken(tokenClient);
-                String username = null;
-
-                if (!tokenClient.equals("null")){
-                    if (userOptional.isPresent()) {
-                        User user = userOptional.get();
-                        if (UserAuthenticator.validToken(user, tokenClient)) {
-                            validToken = true;
-                        }
-                    }
-                }
-
-                if(userOptional.isEmpty() || !validToken){
-                    writer.println("Token unauthorized");
-                }
-
-                if (validToken){
-                    writer.println("Token authorized");
-                }
-
-                if(!validToken) {
-
-                    String password;
-                    boolean authenticated = false;
-                    boolean tryLogin = false;
-                    String option;
-
-                    do {
-                        System.out.println("\n");
-                        if (tryLogin) {
-                            writer.println("Authentication failed. Please try again or register a new account (r).");
-                        }
-
-                        option = reader.readLine();
-
-                        if (option.equals("login")) {
-                            tryLogin = true;
-                            System.out.println("server.Login -----------");
-                            username = reader.readLine();
-                            System.out.println("Username: " + username);
-                            password = reader.readLine();
-                            authenticated = UserAuthenticator.login(username, password);
-                            if (!authenticated) {
-                                System.out.println("Authenticated failed");
-                            }
-                            else {
-                                System.out.println("Authenticated succeded\n");
-                                writer.println("Authentication succeeded.");
-                            }
-                        }
-                        else if (option.equals("register")) {
-                            tryLogin = false;
-                            System.out.println("Register -----------");
-                            username = reader.readLine();
-                            System.out.println("Username: " + username);
-                            password = reader.readLine();
-                            if (UserAuthenticator.register(username, password)) {
-                                System.out.println("Registration succeeded");
-                                writer.println("Registration succeeded. Please login to your account.");
-                            }
-                            else {
-                                System.out.println("Registration failed");
-                                writer.println("Registration failed. Username already exists.");
-                            }
-                        }
-                        else {
-                            System.out.println("Invalid option. Please try again.");
-                        }
-
-                    } while (!authenticated);
-
-                    String newToken = generateRandomToken();
-                    updateTokenByUsername(username, newToken);
-                    writer.println(newToken);
-                }
-                userOptional.ifPresent(u ->
-                        System.out.println("Client authenticated: " + u.getUsername() + "\n"));
+                executor.submit(new ClientHandler(clientSocket));
             }
 
         } catch (SocketException ex) {
             System.out.println("A conexão com o cliente foi interrompida.");
         } catch (IOException ex) {
             System.out.println("Ocorreu uma exceção de IO: " + ex.getMessage());
-        } catch (NoSuchAlgorithmException | ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String generateRandomToken() {
-        Random random = new Random();
-        int randomInt = random.nextInt();
-        return Integer.toHexString(randomInt);
-    }
-
-    private static void updateTokenByUsername(String username, String newToken) throws IOException, ParseException {
-        try {
-            long nowInMillis = System.currentTimeMillis();
-            long sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000L;
-            long sevenDaysFromNowInMillis = nowInMillis + sevenDaysInMillis;
-
-            File file = new File("data/users.txt");
-            Scanner scanner = new Scanner(file);
-
-            List<String> updatedUsers = new ArrayList<>();
-
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                String[] fields = line.split(",");
-
-                if (fields[0].equals(username)) {
-                    fields[2] = newToken;
-                    fields[3] = String.valueOf(sevenDaysFromNowInMillis);
-                    line = String.join(",", fields);
-                }
-                updatedUsers.add(line);
-            }
-
-            scanner.close();
-
-            FileWriter writer = new FileWriter(file);
-
-            for (String line : updatedUsers) {
-                writer.write(line + "\n");
-            }
-
-            writer.close();
-
-            UsersRepository.getUserByName(username).ifPresent(u ->
-                    u.setToken(newToken));
-            UsersRepository.getUserByName(username).ifPresent(u ->
-                    u.setExpiryDateToken(sevenDaysFromNowInMillis));
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

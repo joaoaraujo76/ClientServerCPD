@@ -1,15 +1,9 @@
 package server;
 
-import server.models.User;
-import server.parser.UsersParser;
-import server.repository.UsersRepository;
-import server.services.UserAuthenticator;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.*;
 import java.util.concurrent.*;
 
 
@@ -28,11 +22,10 @@ public class Server {
             System.out.println("Server is listening on port " + port +"\n") ;
 
             while (true) {
-                //serverSocket().accept() is blocking, which means that the server waits for a connection before moving on.
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected from " + clientSocket.getInetAddress());
 
-                executor.submit(new ClientHandler(clientSocket));
+                executor.submit(new ConnectionHandler(clientSocket));
             }
 
         } catch (SocketException ex) {

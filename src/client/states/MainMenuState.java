@@ -1,5 +1,9 @@
 package client.states;
 
+import protocol.Message;
+import protocol.MessageType;
+
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
@@ -19,7 +23,37 @@ public class MainMenuState implements ClientState {
 
     @Override
     public ClientState execute() {
-        System.out.println("MAIN MENU STATE");
-        return null;
+        System.out.println("MAIN MENU\n");
+        System.out.println("Do you want to queue into simple or ranked play? (s/r) ");
+        String option = scanner.nextLine();
+
+        switch (option) {
+            case "s" -> {
+                try {
+                    output.writeObject(new Message(MessageType.JOIN_SIMPLE_QUEUE, token));
+                    output.flush();
+
+                    System.out.println(((Message) input.readObject()).getMessage());
+                } catch (IOException | ClassNotFoundException e) {
+                    //TODO: handle exceptions
+                }
+                return new MainMenuState(token, scanner, input, output);
+            }
+            case "r" -> {
+                try {
+                    output.writeObject(new Message(MessageType.JOIN_RANKED_QUEUE, token));
+                    output.flush();
+
+                    System.out.println(((Message) input.readObject()).getMessage());
+                } catch (IOException | ClassNotFoundException e) {
+                    //TODO: handle exceptions
+                }
+                return new MainMenuState(token, scanner, input, output);
+            }
+            default -> {
+                System.out.println("Invalid option. Please try again.");
+                return new MainMenuState(token, scanner, input, output);
+            }
+        }
     }
 }

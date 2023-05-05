@@ -6,19 +6,19 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public final class MediumEloQueue implements GameQueue {
-    private static volatile MediumEloQueue instance;
+public class SimpleQueue implements GameQueue {
+    private static volatile SimpleQueue instance;
     private final Queue<User> queue;
 
-    private MediumEloQueue() {
+    private SimpleQueue() {
         queue = new PriorityQueue<>(Comparator.comparingLong(User::getExpiryDateToken));
     }
 
-    public static MediumEloQueue getInstance() {
+    public static SimpleQueue getInstance() {
         if (instance == null) {
-            synchronized (MediumEloQueue.class) {
+            synchronized (LowEloQueue.class) {
                 if (instance == null) {
-                    instance = new MediumEloQueue();
+                    instance = new SimpleQueue();
                 }
             }
         }

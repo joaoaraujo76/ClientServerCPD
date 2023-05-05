@@ -25,10 +25,10 @@ public class ConnectionHandler implements Runnable {
             ObjectOutputStream output = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
             output.flush();
-            UsersParser.parse();
 
             while (true) {
                 Object obj = input.readObject();
+                UsersParser.parse();
 
                 if (obj instanceof Message message) {
                     String tokenClient = message.getToken();
@@ -51,9 +51,14 @@ public class ConnectionHandler implements Runnable {
                             loginTokenCommand.execute();
                         }
 
-                        case JOIN_QUEUE -> {
-                            Command joinQueueCommand = new JoinQueueCommand(message, output);
-                            joinQueueCommand.execute();
+                        case JOIN_RANKED_QUEUE -> {
+                            Command joinRankedQueueCommand = new JoinRankedQueueCommand(message, output);
+                            joinRankedQueueCommand.execute();
+                        }
+
+                        case JOIN_SIMPLE_QUEUE -> {
+                            Command joinSimpleQueueCommand = new JoinSimpleQueueCommand(message, output);
+                            joinSimpleQueueCommand.execute();
                         }
                     }
                 }

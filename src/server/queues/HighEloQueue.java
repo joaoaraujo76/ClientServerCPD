@@ -8,9 +8,10 @@ import java.util.Queue;
 
 public final class HighEloQueue implements GameQueue {
     private static volatile HighEloQueue instance;
+    private final Queue<User> queue;
 
     private HighEloQueue() {
-        Queue<User> queue = new PriorityQueue<>(Comparator.comparingLong(User::getExpiryDateToken));
+        queue = new PriorityQueue<>(Comparator.comparingLong(User::getExpiryDateToken));
     }
 
     public static HighEloQueue getInstance() {
@@ -26,16 +27,16 @@ public final class HighEloQueue implements GameQueue {
 
     @Override
     public void add(User user) {
-        instance.add(user);
+        queue.add(user);
     }
 
     @Override
     public int size() {
-        return instance.size();
+        return queue.size();
     }
 
     @Override
-    public User poll() {
-        return instance.poll();
+    public boolean contains(User user) {
+        return queue.contains(user);
     }
 }

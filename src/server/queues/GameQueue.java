@@ -5,5 +5,5 @@ import server.models.User;
 public interface GameQueue {
     void add(User user);
     int size();
-    User poll();
+    boolean contains(User user);
 }

@@ -1,15 +1,18 @@
 package server.queues;
 
+import server.models.GameState;
 import server.models.User;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
+
+import static server.data.UsersData.updateStateByUsername;
 
 public final class LowEloQueue implements GameQueue {
     private static volatile LowEloQueue instance;
     private final Queue<User> queue;
-
     private LowEloQueue() {
         queue = new PriorityQueue<>(Comparator.comparingLong(User::getExpiryDateToken));
     }
@@ -26,8 +29,9 @@ public final class LowEloQueue implements GameQueue {
     }
 
     @Override
-    public void add(User user) {
+    public void add(User user, Long time) {
         queue.add(user);
+        updateStateByUsername(user.getUsername(), time, GameState.QUEUE);
     }
 
     @Override
@@ -38,5 +42,10 @@ public final class LowEloQueue implements GameQueue {
     @Override
     public boolean contains(User user) {
         return queue.contains(user);
+    }
+
+    @Override
+    public Iterator<User> iterator() {
+        return queue.iterator();
     }
 }

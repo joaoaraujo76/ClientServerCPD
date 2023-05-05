@@ -8,6 +8,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
+import static server.data.UsersData.addUser;
+import static server.data.UsersData.invalidateTokenByUsername;
+
 public class UserAuthenticator implements Authenticator {
 
     public static boolean login(String username, String password) {
@@ -23,7 +26,7 @@ public class UserAuthenticator implements Authenticator {
     }
 
     public static boolean register(String username, String password) throws IOException, NoSuchAlgorithmException {
-        return UsersRepository.addUser(new User(username, hashPassword(password)));
+        return addUser(new User(username, hashPassword(password)));
     }
 
     private static String hashPassword(String password) throws NoSuchAlgorithmException {
@@ -36,11 +39,11 @@ public class UserAuthenticator implements Authenticator {
         return sb.toString();
     }
 
-    public static boolean validToken(User user, String token) throws IOException{
+    public static boolean validToken(User user, String token) {
         if (user.getToken().equals(token) && user.getExpiryDateToken() > System.currentTimeMillis()) {
             return true;
         } else {
-            UsersRepository.invalidateTokenByUsername(user.getUsername());
+            invalidateTokenByUsername(user.getUsername());
             return false;
         }
     }

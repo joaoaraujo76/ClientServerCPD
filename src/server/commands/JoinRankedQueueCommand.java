@@ -2,6 +2,7 @@ package server.commands;
 
 import protocol.Message;
 import protocol.MessageType;
+import server.models.GameState;
 import server.models.User;
 import server.queues.GameQueue;
 import server.queues.HighEloQueue;
@@ -40,9 +41,9 @@ public class JoinRankedQueueCommand implements Command {
                 queue = LowEloQueue.getInstance();
             }
 
-            if(!queue.contains(user)) {
-                queue.add(user);
-                output.writeObject(new Message(MessageType.QUEUE_POSITION, token, "You are in queue position number " + queue.size()));
+            if(!queue.contains(user) && !user.getState().equals(GameState.QUEUE)) {
+                queue.add(user, System.currentTimeMillis());
+                output.writeObject(new Message(MessageType.QUEUED, token, "You are in queue position number " + queue.size()));
                 System.out.println("User " + user.getUsername() + " queued in the " + queue.getClass() + " in position " + queue.size());
             } else {
                 output.writeObject(new Message(MessageType.ERROR, token, "User already queued"));

@@ -8,13 +8,17 @@ public class User {
     private String token;
     private Long expiryDateToken;
     private Integer elo;
+    private GameState state;
+    private Long queueJoinTime;
 
-    public User(String username, String hashedPassword, String token, long expiryDateToken, Integer elo) {
+    public User(String username, String hashedPassword, String token, Long expiryDateToken, Integer elo, String state, Long queueJoinTime) {
         this.username = username;
         this.hashedPassword = hashedPassword;
         this.token = token;
         this.expiryDateToken = expiryDateToken;
         this.elo = elo;
+        this.state = GameState.valueOf(state);
+        this.queueJoinTime = queueJoinTime;
     }
 
     public User(String username, String hashedPassword) {
@@ -23,6 +27,8 @@ public class User {
         this.token = null;
         this.expiryDateToken = -1L;
         this.elo = 1000;
+        this.state = GameState.NONE;
+        this.queueJoinTime = -1L;
     }
 
     public String getUsername() {
@@ -57,6 +63,22 @@ public class User {
 
     public void setElo(int elo) {
         this.elo = elo;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public Long getQueueJoinTime() {
+        return queueJoinTime;
+    }
+
+    public void setQueueJoinTime(Long queueJoinTime) {
+        this.queueJoinTime = queueJoinTime;
     }
 
     @Override

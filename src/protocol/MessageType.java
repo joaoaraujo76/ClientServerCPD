@@ -9,7 +9,7 @@ public enum MessageType {
     AUTHENTICATED_TOKEN,
     JOIN_SIMPLE_QUEUE,
     JOIN_RANKED_QUEUE,
-    QUEUE_POSITION,
+    QUEUED,
     LEAVE_QUEUE,
     QUEUE_LEFT,
     RESUME,

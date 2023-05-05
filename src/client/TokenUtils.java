@@ -3,10 +3,10 @@ package client;
 import java.io.*;
 
 public class TokenUtils {
-
+    private final static String TOKEN_FILE = "src/client/token.txt";
     public static void updateToken(String newToken) {
         try {
-            File file = new File("src/client/token.txt");
+            File file = new File(TOKEN_FILE);
             if (file.exists()) {
                 FileWriter writer = new FileWriter(file);
                 writer.write(newToken);
@@ -24,7 +24,7 @@ public class TokenUtils {
 
     public static String getClientToken() {
         String token = null;
-        File file = new File("src/client/token.txt");
+        File file = new File(TOKEN_FILE);
         if (file.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line = br.readLine();

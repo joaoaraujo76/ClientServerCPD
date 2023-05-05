@@ -1,5 +1,10 @@
 package server;
 
+import server.queues.HighEloQueue;
+import server.queues.LowEloQueue;
+import server.queues.MediumEloQueue;
+import server.queues.QueueTimeoutChecker;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,6 +31,8 @@ public class Server {
                 System.out.println("Client connected from " + clientSocket.getInetAddress());
 
                 executor.submit(new ConnectionHandler(clientSocket));
+                executor.submit(new QueueTimeoutChecker(HighEloQueue.getInstance(), MediumEloQueue.getInstance(), 2));
+                executor.submit(new QueueTimeoutChecker(MediumEloQueue.getInstance(), LowEloQueue.getInstance(), 1));
             }
 
         } catch (SocketException ex) {

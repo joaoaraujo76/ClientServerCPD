@@ -2,17 +2,13 @@ package server.commands;
 
 import protocol.Message;
 import protocol.MessageType;
-import server.repository.UsersRepository;
 import server.services.UserAuthenticator;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
+
+import static server.data.UsersData.updateTokenByUsername;
 
 public class LoginCommand implements Command {
     private final Message message;
@@ -49,40 +45,5 @@ public class LoginCommand implements Command {
         Random random = new Random();
         int randomInt = random.nextInt();
         return Integer.toHexString(randomInt);
-    }
-
-    private static void updateTokenByUsername(String username, String newToken) {
-        try {
-            long nowInMillis = System.currentTimeMillis();
-            long sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000L;
-            long sevenDaysFromNowInMillis = nowInMillis + sevenDaysInMillis;
-
-            File file = new File("data/users.txt");
-            Scanner scanner = new Scanner(file);
-            List<String> updatedUsers = new ArrayList<>();
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                String[] fields = line.split(",");
-
-                if (fields[0].equals(username)) {
-                    fields[2] = newToken;
-                    fields[3] = String.valueOf(sevenDaysFromNowInMillis);
-                    line = String.join(",", fields);
-                }
-                updatedUsers.add(line);
-            }
-            scanner.close();
-            FileWriter writer = new FileWriter(file);
-            for (String line : updatedUsers) {
-                writer.write(line + "\n");
-            }
-            writer.close();
-            UsersRepository.getUserByName(username).ifPresent(u ->
-                    u.setToken(newToken));
-            UsersRepository.getUserByName(username).ifPresent(u ->
-                    u.setExpiryDateToken(sevenDaysFromNowInMillis));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

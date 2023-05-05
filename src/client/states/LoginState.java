@@ -64,7 +64,7 @@ public class LoginState implements ClientState {
                     if (authResult.getType() == (MessageType.AUTHENTICATED)) {
                         String newToken = authResult.getToken();
                         updateToken(newToken);
-                        return new MainMenuState(token, scanner, input, output);
+                        return new MainMenuState(newToken, scanner, input, output);
                     } else {
                         return new LoginState(token, scanner, input, output);
                     }

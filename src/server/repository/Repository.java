@@ -17,10 +17,4 @@ public interface Repository<T> {
     static <T> Optional<T> getUserByToken(String token) {
         return Optional.empty();
     }
-
-    static boolean addUser(User user) {
-        return false;
-    }
-
-    static void invalidateTokenByUsername(String username) { }
 }

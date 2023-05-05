@@ -36,7 +36,7 @@ public class LoginCommand implements Command {
             String newToken = generateRandomToken();
             updateTokenByUsername(username, newToken);
             System.out.println("Authenticated succeeded\n");
-            output.writeObject(new Message(MessageType.AUTHENTICATED, token, "Login successful."));
+            output.writeObject(new Message(MessageType.AUTHENTICATED, newToken, "Login successful."));
             output.flush();
         } else {
             System.out.println("Authenticated failed");

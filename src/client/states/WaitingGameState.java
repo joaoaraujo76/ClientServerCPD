@@ -20,6 +20,11 @@ public class WaitingGameState implements ClientState {
     @Override
     public ClientState execute() {
         System.out.println("WAITING FOR GAME\n");
+        try {
+            Thread.sleep(60 * 1000); // 1 min
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 }

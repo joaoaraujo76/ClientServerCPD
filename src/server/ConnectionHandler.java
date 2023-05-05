@@ -25,10 +25,10 @@ public class ConnectionHandler implements Runnable {
             ObjectOutputStream output = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
             output.flush();
-            UsersParser.parse();
 
             while (true) {
                 Object obj = input.readObject();
+                UsersParser.parse();
 
                 if (obj instanceof Message message) {
                     String tokenClient = message.getToken();

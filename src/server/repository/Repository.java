@@ -1,7 +1,5 @@
 package server.repository;
 
-import server.models.User;
-
 import java.util.Optional;
 import java.util.Set;
 

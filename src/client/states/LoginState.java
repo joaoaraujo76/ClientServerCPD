@@ -13,6 +13,8 @@ public class LoginState implements ClientState {
     private final Scanner scanner;
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
+    private static final String REGISTER = "r";
+    private static final String LOGIN = "l";
 
     public LoginState(String token, Scanner scanner, ObjectInputStream input, ObjectOutputStream output) {
         this.token = token;
@@ -27,7 +29,7 @@ public class LoginState implements ClientState {
         String option = scanner.nextLine();
 
         switch (option) {
-            case "r" -> {
+            case REGISTER -> {
                 System.out.println("Register -----------");
                 System.out.print("Username: ");
                 String username = scanner.nextLine();
@@ -43,10 +45,10 @@ public class LoginState implements ClientState {
                 } catch (IOException | ClassNotFoundException e) {
                     // TODO: handle exceptions
                 }
-                return new LoginState(token, scanner, input, output);
+                return this;
             }
 
-            case "l" -> {
+            case LOGIN -> {
                 System.out.println("Login -----------");
                 System.out.print("Username: ");
                 String username = scanner.nextLine();
@@ -66,7 +68,7 @@ public class LoginState implements ClientState {
                         updateToken(newToken);
                         return new MainMenuState(newToken, scanner, input, output);
                     } else {
-                        return new LoginState(token, scanner, input, output);
+                        return this;
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     // TODO: handle exceptions
@@ -74,7 +76,7 @@ public class LoginState implements ClientState {
             }
             default -> {
                 System.out.println("Invalid option. Please try again.");
-                return new LoginState(token, scanner, input, output);
+                return this;
             }
         }
         return null;

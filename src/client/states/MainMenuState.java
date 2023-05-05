@@ -13,6 +13,8 @@ public class MainMenuState implements ClientState {
     private final Scanner scanner;
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
+    private static final String SIMPLE_QUEUE = "s";
+    private static final String RANKED_QUEUE = "r";
 
     public MainMenuState(String token, Scanner scanner, ObjectInputStream input, ObjectOutputStream output) {
         this.token = token;
@@ -28,7 +30,7 @@ public class MainMenuState implements ClientState {
         String option = scanner.nextLine();
 
         switch (option) {
-            case "s" -> {
+            case SIMPLE_QUEUE -> {
                 try {
                     output.writeObject(new Message(MessageType.JOIN_SIMPLE_QUEUE, token));
                     output.flush();
@@ -37,9 +39,9 @@ public class MainMenuState implements ClientState {
                 } catch (IOException | ClassNotFoundException e) {
                     //TODO: handle exceptions
                 }
-                return new MainMenuState(token, scanner, input, output);
+                return new WaitingGameState(token, scanner, input, output);
             }
-            case "r" -> {
+            case RANKED_QUEUE -> {
                 try {
                     output.writeObject(new Message(MessageType.JOIN_RANKED_QUEUE, token));
                     output.flush();
@@ -48,11 +50,11 @@ public class MainMenuState implements ClientState {
                 } catch (IOException | ClassNotFoundException e) {
                     //TODO: handle exceptions
                 }
-                return new MainMenuState(token, scanner, input, output);
+                return new WaitingGameState(token, scanner, input, output);
             }
             default -> {
                 System.out.println("Invalid option. Please try again.");
-                return new MainMenuState(token, scanner, input, output);
+                return this;
             }
         }
     }

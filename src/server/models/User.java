@@ -6,13 +6,23 @@ public class User {
     private final String username;
     private String hashedPassword;
     private String token;
-    private long expiryDateToken;
+    private Long expiryDateToken;
+    private Integer elo;
 
-    public User(String username, String hashedPassword, String token, long expiryDateToken) {
+    public User(String username, String hashedPassword, String token, long expiryDateToken, Integer elo) {
         this.username = username;
         this.hashedPassword = hashedPassword;
         this.token = token;
         this.expiryDateToken = expiryDateToken;
+        this.elo = elo;
+    }
+
+    public User(String username, String hashedPassword) {
+        this.username = username;
+        this.hashedPassword = hashedPassword;
+        this.token = null;
+        this.expiryDateToken = -1L;
+        this.elo = 1000;
     }
 
     public String getUsername() {
@@ -39,6 +49,14 @@ public class User {
 
     public void setExpiryDateToken(long expiryDateToken) {
         this.expiryDateToken = expiryDateToken;
+    }
+
+    public int getElo() {
+        return elo;
+    }
+
+    public void setElo(int elo) {
+        this.elo = elo;
     }
 
     @Override

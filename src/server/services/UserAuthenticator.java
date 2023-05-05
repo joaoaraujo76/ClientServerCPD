@@ -6,7 +6,6 @@ import server.models.User;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.util.Optional;
 
 public class UserAuthenticator implements Authenticator {
@@ -24,7 +23,7 @@ public class UserAuthenticator implements Authenticator {
     }
 
     public static boolean register(String username, String password) throws IOException, NoSuchAlgorithmException {
-        return UsersRepository.addUser(new User(username, hashPassword(password), null, -1));
+        return UsersRepository.addUser(new User(username, hashPassword(password)));
     }
 
     private static String hashPassword(String password) throws NoSuchAlgorithmException {

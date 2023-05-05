@@ -17,7 +17,7 @@ public class UsersParser implements Parser {
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             String[] split = line.split(",");
-            UsersRepository.getUserList().add(new User(split[0], split[1], split[2], Long.parseLong(split[3])));
+            UsersRepository.getUserList().add(new User(split[0], split[1], split[2], Long.parseLong(split[3]), Integer.parseInt(split[4])));
         }
         bufferedReader.close();
     }

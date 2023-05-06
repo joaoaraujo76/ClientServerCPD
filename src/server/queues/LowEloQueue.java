@@ -14,7 +14,7 @@ public final class LowEloQueue implements GameQueue {
     private static volatile LowEloQueue instance;
     private final Queue<User> queue;
     private LowEloQueue() {
-        queue = new PriorityQueue<>(Comparator.comparingLong(User::getExpiryDateToken));
+        queue = new PriorityQueue<>(Comparator.comparingLong(User::getQueueJoinTime));
     }
 
     public static LowEloQueue getInstance() {

@@ -15,7 +15,7 @@ public class SimpleQueue implements GameQueue {
     private final Queue<User> queue;
 
     private SimpleQueue() {
-        queue = new PriorityQueue<>(Comparator.comparingLong(User::getExpiryDateToken));
+        queue = new PriorityQueue<>(Comparator.comparingLong(User::getQueueJoinTime));
     }
 
     public static SimpleQueue getInstance() {

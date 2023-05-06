@@ -15,7 +15,7 @@ public final class MediumEloQueue implements GameQueue {
     private final Queue<User> queue;
 
     private MediumEloQueue() {
-        queue = new PriorityQueue<>(Comparator.comparingLong(User::getExpiryDateToken));
+        queue = new PriorityQueue<>(Comparator.comparingLong(User::getQueueJoinTime));
     }
 
     public static MediumEloQueue getInstance() {

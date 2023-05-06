@@ -15,7 +15,7 @@ public final class HighEloQueue implements GameQueue {
     private final Queue<User> queue;
 
     private HighEloQueue() {
-        queue = new PriorityQueue<>(Comparator.comparingLong(User::getExpiryDateToken));
+        queue = new PriorityQueue<>(Comparator.comparingLong(User::getQueueJoinTime));
     }
 
     public static HighEloQueue getInstance() {

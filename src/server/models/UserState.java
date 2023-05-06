@@ -1,6 +1,6 @@
 package server.models;
 
-public enum GameState {
+public enum UserState {
     NONE,
     QUEUE,
     GAME

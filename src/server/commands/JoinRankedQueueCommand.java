@@ -2,7 +2,7 @@ package server.commands;
 
 import protocol.Message;
 import protocol.MessageType;
-import server.models.GameState;
+import server.models.UserState;
 import server.models.User;
 import server.queues.GameQueue;
 import server.queues.HighEloQueue;
@@ -41,16 +41,20 @@ public class JoinRankedQueueCommand implements Command {
                 queue = LowEloQueue.getInstance();
             }
 
-            if(!queue.contains(user) && !user.getState().equals(GameState.QUEUE)) {
+            if(!queue.contains(user) && !user.getState().equals(UserState.QUEUE)) {
                 queue.add(user, System.currentTimeMillis());
-                output.writeObject(new Message(MessageType.QUEUED, token, "You are in queue position number " + queue.size()));
                 System.out.println("User " + user.getUsername() + " queued in the " + queue.getClass() + " in position " + queue.size());
+                output.writeObject(new Message(MessageType.QUEUED, token, "You are in queue position number " + queue.size()));
+                output.flush();
             } else {
-                output.writeObject(new Message(MessageType.ERROR, token, "User already queued"));
+                System.out.println("User already queued.");
+                output.writeObject(new Message(MessageType.ERROR, token, "User already queued."));
+                output.flush();
             }
         } else {
-            output.writeObject(new Message(MessageType.ERROR, token, "No user for given token."));
             System.out.println("No user for given token.");
+            output.writeObject(new Message(MessageType.ERROR, token, "No user for given token."));
+            output.flush();
         }
     }
 }

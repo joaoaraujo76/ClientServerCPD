@@ -63,17 +63,30 @@ public class LoginState implements ClientState {
                     Message authResult = (Message) input.readObject();
                     System.out.println(authResult.getMessage());
 
-                    if (authResult.getType() == (MessageType.AUTHENTICATED)) {
-                        String newToken = authResult.getToken();
-                        updateToken(newToken);
-                        return new MainMenuState(newToken, scanner, input, output);
-                    } else {
-                        return this;
+                    switch (authResult.getType()) {
+                        case AUTHENTICATED -> {
+                            System.out.println("Authentication succeeded.");
+                            String newToken = authResult.getToken();
+                            updateToken(newToken);
+                            return new MainMenuState(newToken, scanner, input, output);
+                        }
+
+                        case RESUME -> {
+                            System.out.println("Authentication succeeded. Returning to queue");
+                            String newToken = authResult.getToken();
+                            updateToken(newToken);
+                            return new WaitingGameState(newToken, scanner, input, output);
+                        }
+
+                        default -> {
+                            return this;
+                        }
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     // TODO: handle exceptions
                 }
             }
+
             default -> {
                 System.out.println("Invalid option. Please try again.");
                 return this;

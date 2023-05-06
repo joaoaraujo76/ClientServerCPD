@@ -10,8 +10,6 @@ public enum MessageType {
     JOIN_SIMPLE_QUEUE,
     JOIN_RANKED_QUEUE,
     QUEUED,
-    LEAVE_QUEUE,
-    QUEUE_LEFT,
     RESUME,
     ERROR
 }

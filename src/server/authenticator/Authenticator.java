@@ -1,4 +1,4 @@
-package server.services;
+package server.authenticator;
 
 import server.models.User;
 

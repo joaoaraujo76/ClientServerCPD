@@ -1,6 +1,6 @@
 package server.data;
 
-import server.models.GameState;
+import server.models.UserState;
 import server.models.User;
 import server.repository.UsersRepository;
 
@@ -106,7 +106,7 @@ public class UsersData {
         }
     }
 
-    public static void updateStateByUsername(String username, Long time, GameState state) {
+    public static void updateStateByUsername(String username, Long time, UserState state) {
         try {
             File file = new File(DATA_FILE);
             Scanner scanner = new Scanner(file);

@@ -30,16 +30,26 @@ public class LoginTokenState implements ClientState{
             output.flush();
 
             Message message = (Message) input.readObject();
-            if (message.getType() == MessageType.AUTHENTICATED_TOKEN) {
-                System.out.println("Authentication succeeded.");
-                return new MainMenuState(token, scanner, input, output);
-            } else {
-                System.out.println(message.getMessage());
-                return new LoginState(token, scanner, input, output);
+
+            switch (message.getType()) {
+                case AUTHENTICATED_TOKEN -> {
+                    System.out.println("Token Authentication succeeded.");
+                    return new MainMenuState(token, scanner, input, output);
+                }
+
+                case RESUME -> {
+                    System.out.println("Token Authentication succeeded. Returning to queue");
+                    return new WaitingGameState(token, scanner, input, output);
+                }
+
+                default -> {
+                    System.out.println(message.getMessage());
+                    return new LoginState(token, scanner, input, output);
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
-            //TODO: handle exceptions
-            return null;
+            // TODO: handle exceptions
         }
+        return null;
     }
 }

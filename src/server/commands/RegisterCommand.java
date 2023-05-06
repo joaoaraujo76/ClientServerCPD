@@ -2,7 +2,7 @@ package server.commands;
 
 import protocol.Message;
 import protocol.MessageType;
-import server.services.UserAuthenticator;
+import server.authenticator.UserAuthenticator;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

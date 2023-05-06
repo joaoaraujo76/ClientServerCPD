@@ -1,6 +1,6 @@
 package server.queues;
 
-import server.models.GameState;
+import server.models.UserState;
 import server.models.User;
 
 import java.util.Comparator;
@@ -32,7 +32,7 @@ public final class MediumEloQueue implements GameQueue {
     @Override
     public void add(User user, Long time) {
         queue.add(user);
-        updateStateByUsername(user.getUsername(), time, GameState.QUEUE);
+        updateStateByUsername(user.getUsername(), time, UserState.QUEUE);
     }
 
     @Override

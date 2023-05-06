@@ -8,7 +8,7 @@ public class User {
     private String token;
     private Long expiryDateToken;
     private Integer elo;
-    private GameState state;
+    private UserState state;
     private Long queueJoinTime;
 
     public User(String username, String hashedPassword, String token, Long expiryDateToken, Integer elo, String state, Long queueJoinTime) {
@@ -17,7 +17,7 @@ public class User {
         this.token = token;
         this.expiryDateToken = expiryDateToken;
         this.elo = elo;
-        this.state = GameState.valueOf(state);
+        this.state = UserState.valueOf(state);
         this.queueJoinTime = queueJoinTime;
     }
 
@@ -27,7 +27,7 @@ public class User {
         this.token = null;
         this.expiryDateToken = -1L;
         this.elo = 1000;
-        this.state = GameState.NONE;
+        this.state = UserState.NONE;
         this.queueJoinTime = -1L;
     }
 
@@ -65,11 +65,11 @@ public class User {
         this.elo = elo;
     }
 
-    public GameState getState() {
+    public UserState getState() {
         return state;
     }
 
-    public void setState(GameState state) {
+    public void setState(UserState state) {
         this.state = state;
     }
 

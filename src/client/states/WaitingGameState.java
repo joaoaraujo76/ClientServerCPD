@@ -25,18 +25,30 @@ public class WaitingGameState implements ClientState {
     public ClientState execute() {
         System.out.println("WAITING FOR GAME\n");
         try {
-                Message message = (Message) input.readObject();
+            Message message = (Message) input.readObject();
 
-                if (message.getType().equals(MessageType.GAME)) {
+            switch (message.getType()) {
+                case CHECK -> {
+                    System.out.println(message.getMessage());
+
+                    output.writeObject(new Message(MessageType.CHECK, token, "Player present"));
+                    output.flush();
+                    return this;
+                }
+
+                case START_GAME -> {
                     System.out.println(message.getMessage());
                     return new GameState(token, scanner, input, output);
-                } else {
+                }
+
+                default -> {
                     System.out.println(message.getMessage());
                     return this;
                 }
+            }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }

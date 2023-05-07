@@ -35,6 +35,15 @@ public final class LowEloQueue implements GameQueue {
     }
 
     @Override
+    public void removePlayer(Player player) {
+        Iterator<Player> iterator = iterator();
+        while (iterator.hasNext()) {
+            if (iterator.equals(player)) {
+                iterator.remove();
+            }
+        }
+    }
+    @Override
     public int size() {
         return queue.size();
     }

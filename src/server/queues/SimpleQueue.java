@@ -34,11 +34,19 @@ public class SimpleQueue implements GameQueue {
         checkForGameStart();
     }
 
+    @Override
+    public void removePlayer(Player player) {
+        Iterator<Player> iterator = iterator();
+        while (iterator.hasNext()) {
+            if (iterator.equals(player)) {
+                iterator.remove();
+            }
+        }
+    }
+
     private void checkForGameStart() {
         if (queue.size() >= 2) {
-            // Start a new thread to handle the game
             new Thread(() -> {
-                // Get the players from the queue
                 List<Player> players = new ArrayList<>();
                 for (int i = 0; i < 2; i++) {
                     players.add(queue.remove());

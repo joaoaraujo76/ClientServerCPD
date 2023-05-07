@@ -11,7 +11,9 @@ public enum MessageType {
     JOIN_RANKED_QUEUE,
     QUEUED,
     RESUME,
-    GAME,
+    CHECK,
+    START_GAME,
+    END_GAME,
     ERROR
 }
 

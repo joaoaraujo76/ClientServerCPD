@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class UsersData {
     private static final String DATA_FILE = "src/server/data/users.txt";
 
-    public static boolean addUser(User user) throws IOException {
+    public synchronized static boolean addUser(User user) throws IOException {
         if (UsersRepository.getUserList().add(user)) {
             try (FileWriter fileWriter = new FileWriter(DATA_FILE, true)) {
                 fileWriter.write(
@@ -32,7 +32,7 @@ public class UsersData {
         return false;
     }
 
-    public static void invalidateTokenByUsername(String username) {
+    public synchronized static void invalidateTokenByUsername(String username) {
         try {
             File file = new File(DATA_FILE);
             Scanner scanner = new Scanner(file);
@@ -71,7 +71,7 @@ public class UsersData {
         }
     }
 
-    public static void updateTokenByUsername(String username, String newToken) {
+    public synchronized static void updateTokenByUsername(String username, String newToken) {
         try {
             long nowInMillis = System.currentTimeMillis();
             long sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000L;
@@ -106,7 +106,7 @@ public class UsersData {
         }
     }
 
-    public static void updateStateByUsername(String username, Long time, UserState state) {
+    public synchronized static void updateStateByUsername(String username, Long time, UserState state) {
         try {
             File file = new File(DATA_FILE);
             Scanner scanner = new Scanner(file);

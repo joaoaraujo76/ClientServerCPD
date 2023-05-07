@@ -1,12 +1,12 @@
 package server.queues;
 
-import server.models.User;
+import server.models.Player;
 
 import java.util.Iterator;
 
 public interface GameQueue {
-    void add(User user, Long time);
+    void add(Player player, Long time);
     int size();
-    boolean contains(User user);
-    Iterator<User> iterator();
+    boolean contains(Player player);
+    Iterator<Player> iterator();
 }

@@ -1,7 +1,7 @@
 package server.queues;
 
+import server.models.Player;
 import server.models.UserState;
-import server.models.User;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,9 +12,9 @@ import static server.data.UsersData.updateStateByUsername;
 
 public final class LowEloQueue implements GameQueue {
     private static volatile LowEloQueue instance;
-    private final Queue<User> queue;
+    private final Queue<Player> queue;
     private LowEloQueue() {
-        queue = new PriorityQueue<>(Comparator.comparingLong(User::getQueueJoinTime));
+        queue = new PriorityQueue<>(Comparator.comparingLong(Player::getQueueJoinTime));
     }
 
     public static LowEloQueue getInstance() {
@@ -29,9 +29,9 @@ public final class LowEloQueue implements GameQueue {
     }
 
     @Override
-    public void add(User user, Long time) {
-        queue.add(user);
-        updateStateByUsername(user.getUsername(), time, UserState.QUEUE);
+    public void add(Player player, Long time) {
+        queue.add(player);
+        updateStateByUsername(player.getUser().getUsername(), time, UserState.QUEUE);
     }
 
     @Override
@@ -40,12 +40,12 @@ public final class LowEloQueue implements GameQueue {
     }
 
     @Override
-    public boolean contains(User user) {
-        return queue.contains(user);
+    public boolean contains(Player player) {
+        return queue.contains(player);
     }
 
     @Override
-    public Iterator<User> iterator() {
+    public Iterator<Player> iterator() {
         return queue.iterator();
     }
 }

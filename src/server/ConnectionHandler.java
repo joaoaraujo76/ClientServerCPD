@@ -52,12 +52,12 @@ public class ConnectionHandler implements Runnable {
                         }
 
                         case JOIN_RANKED_QUEUE -> {
-                            Command joinRankedQueueCommand = new JoinRankedQueueCommand(message, output);
+                            Command joinRankedQueueCommand = new JoinRankedQueueCommand(message, output, clientSocket);
                             joinRankedQueueCommand.execute();
                         }
 
                         case JOIN_SIMPLE_QUEUE -> {
-                            Command joinSimpleQueueCommand = new JoinSimpleQueueCommand(message, output);
+                            Command joinSimpleQueueCommand = new JoinSimpleQueueCommand(message, output, clientSocket);
                             joinSimpleQueueCommand.execute();
                         }
                     }

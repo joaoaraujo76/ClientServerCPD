@@ -1,5 +1,9 @@
 package client.states;
 
+import protocol.Message;
+import protocol.MessageType;
+
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
@@ -21,10 +25,18 @@ public class WaitingGameState implements ClientState {
     public ClientState execute() {
         System.out.println("WAITING FOR GAME\n");
         try {
-            Thread.sleep(60 * 1000); // 1 min
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+                Message message = (Message) input.readObject();
+
+                if (message.getType().equals(MessageType.GAME)) {
+                    System.out.println(message.getMessage());
+                    return new GameState(token, scanner, input, output);
+                } else {
+                    System.out.println(message.getMessage());
+                    return this;
+                }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
         }
-        return this;
     }
 }

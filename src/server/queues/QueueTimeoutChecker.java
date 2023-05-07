@@ -1,6 +1,6 @@
 package server.queues;
 
-import server.models.User;
+import server.models.Player;
 
 import java.util.Iterator;
 
@@ -27,13 +27,13 @@ public class QueueTimeoutChecker implements Runnable {
             }
             long currentTime = System.currentTimeMillis();
             synchronized (queue) {
-                Iterator<User> iterator = queue.iterator();
+                Iterator<Player> iterator = queue.iterator();
                 while (iterator.hasNext()) {
-                    User user = iterator.next();
-                    if (currentTime - user.getQueueJoinTime() > TIMEOUT_DURATION_MS) {
+                    Player player = iterator.next();
+                    if (currentTime - player.getUser().getQueueJoinTime() > TIMEOUT_DURATION_MS) {
                         iterator.remove();
-                        lowerQueue.add(user, user.getQueueJoinTime());
-                        System.out.println("Moved user " + user.getUsername() + " to lower queue.");
+                        lowerQueue.add(player, player.getUser().getQueueJoinTime());
+                        System.out.println("Moved user " + player.getUser().getUsername() + " to lower queue.");
                     }
                 }
             }

@@ -2,6 +2,7 @@ package server.commands;
 
 import protocol.Message;
 import protocol.MessageType;
+import server.models.Player;
 import server.models.UserState;
 import server.models.User;
 import server.queues.GameQueue;
@@ -12,15 +13,17 @@ import server.repository.UsersRepository;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.Optional;
 
 public class JoinRankedQueueCommand implements Command {
     private final Message message;
     private final ObjectOutputStream output;
-
-    public JoinRankedQueueCommand(Message message, ObjectOutputStream output) {
+    private final Socket socket;
+    public JoinRankedQueueCommand(Message message, ObjectOutputStream output, Socket socket) {
         this.message = message;
         this.output = output;
+        this.socket = socket;
     }
 
     @Override
@@ -31,6 +34,8 @@ public class JoinRankedQueueCommand implements Command {
         GameQueue queue;
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+            Player player = new Player(user, output);
+
             int elo = user.getElo();
 
             if (elo >= 2000) {
@@ -41,8 +46,8 @@ public class JoinRankedQueueCommand implements Command {
                 queue = LowEloQueue.getInstance();
             }
 
-            if(!queue.contains(user) && !user.getState().equals(UserState.QUEUE)) {
-                queue.add(user, System.currentTimeMillis());
+            if(!queue.contains(player) && !user.getState().equals(UserState.QUEUE)) {
+                queue.add(player, System.currentTimeMillis());
                 System.out.println("User " + user.getUsername() + " queued in the " + queue.getClass() + " in position " + queue.size());
                 output.writeObject(new Message(MessageType.QUEUED, token, "You are in queue position number " + queue.size()));
                 output.flush();

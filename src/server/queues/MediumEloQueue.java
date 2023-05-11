@@ -41,8 +41,10 @@ public final class MediumEloQueue implements GameQueue {
         UsersData.updateStateByUsername(player.getUser().getUsername(), -1L, UserState.NONE);
         Iterator<Player> iterator = iterator();
         while (iterator.hasNext()) {
-            if (iterator.equals(player)) {
+            Player p = iterator.next();
+            if (p.equals(player)) {
                 iterator.remove();
+                break;
             }
         }
     }

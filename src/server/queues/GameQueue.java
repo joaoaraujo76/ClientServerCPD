@@ -11,4 +11,9 @@ public interface GameQueue {
     boolean contains(Player player);
     Iterator<Player> iterator();
 
+    Player peek();
+
+    Player poll();
+
+    boolean offer(Player player);
 }

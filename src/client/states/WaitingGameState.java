@@ -28,17 +28,14 @@ public class WaitingGameState implements ClientState {
             Message message = (Message) input.readObject();
 
             switch (message.getType()) {
-                case CHECK -> {
-                    System.out.println(message.getMessage());
-
-                    output.writeObject(new Message(MessageType.CHECK, token, "Player present"));
-                    output.flush();
-                    return this;
-                }
-
                 case START_GAME -> {
                     System.out.println(message.getMessage());
                     return new GameState(token, scanner, input, output);
+                }
+
+                case ERROR -> {
+                    System.out.println(message.getMessage());
+                    return new MainMenuState(token, scanner, input, output);
                 }
 
                 default -> {

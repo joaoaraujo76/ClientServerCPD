@@ -31,7 +31,7 @@ public class QueueTimeoutChecker implements Runnable {
                 while (iterator.hasNext()) {
                     Player player = iterator.next();
                     if (currentTime - player.getUser().getQueueJoinTime() > TIMEOUT_DURATION_MS) {
-                        iterator.remove();
+                        queue.removePlayer(player);
                         lowerQueue.add(player, player.getUser().getQueueJoinTime());
                         System.out.println("Moved user " + player.getUser().getUsername() + " to lower queue.");
                     }

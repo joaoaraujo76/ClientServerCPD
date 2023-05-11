@@ -1,5 +1,6 @@
 package server.queues;
 
+import server.data.UsersData;
 import server.models.Player;
 import server.models.UserState;
 
@@ -36,6 +37,7 @@ public final class LowEloQueue implements GameQueue {
 
     @Override
     public void removePlayer(Player player) {
+        UsersData.updateStateByUsername(player.getUser().getUsername(), -1L, UserState.NONE);
         Iterator<Player> iterator = iterator();
         while (iterator.hasNext()) {
             if (iterator.equals(player)) {
@@ -56,5 +58,20 @@ public final class LowEloQueue implements GameQueue {
     @Override
     public Iterator<Player> iterator() {
         return queue.iterator();
+    }
+
+    @Override
+    public Player peek() {
+        return queue.peek();
+    }
+
+    @Override
+    public Player poll() {
+        return queue.poll();
+    }
+
+    @Override
+    public boolean offer(Player player) {
+        return queue.offer(player);
     }
 }

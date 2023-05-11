@@ -12,16 +12,20 @@ import server.queues.MediumEloQueue;
 import server.repository.UsersRepository;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Optional;
 
 public class JoinRankedQueueCommand implements Command {
     private final Message message;
+    private final ObjectInputStream input;
     private final ObjectOutputStream output;
     private final Socket socket;
-    public JoinRankedQueueCommand(Message message, ObjectOutputStream output, Socket socket) {
+
+    public JoinRankedQueueCommand(Message message, ObjectInputStream input, ObjectOutputStream output, Socket socket) {
         this.message = message;
+        this.input = input;
         this.output = output;
         this.socket = socket;
     }
@@ -34,7 +38,7 @@ public class JoinRankedQueueCommand implements Command {
         GameQueue queue;
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            Player player = new Player(user, output);
+            Player player = new Player(user, socket, input, output);
 
             int elo = user.getElo();
 

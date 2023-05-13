@@ -47,23 +47,23 @@ public class ConnectionHandler implements Runnable {
                         }
 
                         case LOGIN_TOKEN -> {
-                            Command loginTokenCommand = new LoginTokenCommand(message, output);
+                            Command loginTokenCommand = new LoginTokenCommand(message, input, output, clientSocket);
                             loginTokenCommand.execute();
                         }
 
                         case JOIN_RANKED_QUEUE -> {
-                            Command joinRankedQueueCommand = new JoinRankedQueueCommand(message, output, clientSocket);
+                            Command joinRankedQueueCommand = new JoinRankedQueueCommand(message, input, output, clientSocket);
                             joinRankedQueueCommand.execute();
                         }
 
                         case JOIN_SIMPLE_QUEUE -> {
-                            Command joinSimpleQueueCommand = new JoinSimpleQueueCommand(message, output, clientSocket);
+                            Command joinSimpleQueueCommand = new JoinSimpleQueueCommand(message, input, output, clientSocket);
                             joinSimpleQueueCommand.execute();
                         }
                     }
                 }
             }
-        } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | ParseException e) {
+        } catch (IOException | ClassNotFoundException | ParseException e) {
             // TODO: handle exceptions;
         }
     }

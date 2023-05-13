@@ -71,11 +71,18 @@ public class LoginState implements ClientState {
                             return new MainMenuState(newToken, scanner, input, output);
                         }
 
-                        case RESUME -> {
+                        case RESUME_QUEUE -> {
                             System.out.println("Authentication succeeded. Returning to queue");
                             String newToken = authResult.getToken();
                             updateToken(newToken);
                             return new WaitingGameState(newToken, scanner, input, output);
+                        }
+
+                        case RESUME_GAME -> {
+                            System.out.println("Authentication succeeded. Returning to game");
+                            String newToken = authResult.getToken();
+                            updateToken(newToken);
+                            return new GameState(newToken, scanner, input, output);
                         }
 
                         default -> {

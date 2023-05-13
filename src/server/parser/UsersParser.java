@@ -11,7 +11,7 @@ import java.text.ParseException;
 public class UsersParser implements Parser {
     private static final String DATA_FILE = "src/server/data/users.txt";
 
-    public static void parse() throws IOException, ParseException {
+    public synchronized static void parse() throws IOException, ParseException {
         FileReader fileReader = new FileReader(DATA_FILE);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         UsersRepository.getUserList().clear();

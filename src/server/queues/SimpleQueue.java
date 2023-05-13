@@ -1,17 +1,18 @@
 package server.queues;
 
-import server.game.Game;
+import server.data.UsersData;
 import server.models.Player;
+import server.models.User;
 import server.models.UserState;
 
 import java.util.*;
 
 import static server.data.UsersData.updateStateByUsername;
+import static server.queues.QueueTimeoutChecker.checkForGameStart;
 
 public class SimpleQueue implements GameQueue {
     private static volatile SimpleQueue instance;
     private final Queue<Player> queue;
-
     private SimpleQueue() {
         queue = new PriorityQueue<>(Comparator.comparingLong(Player::getQueueJoinTime));
     }
@@ -31,22 +32,41 @@ public class SimpleQueue implements GameQueue {
     public void add(Player player, Long time) {
         queue.add(player);
         updateStateByUsername(player.getUser().getUsername(), time, UserState.QUEUE);
-        checkForGameStart();
+        if (queue.size() >= 2) {
+            checkForGameStart(getInstance());
+        }
     }
 
-    private void checkForGameStart() {
-        if (queue.size() >= 2) {
-            // Start a new thread to handle the game
-            new Thread(() -> {
-                // Get the players from the queue
-                List<Player> players = new ArrayList<>();
-                for (int i = 0; i < 2; i++) {
-                    players.add(queue.remove());
-                }
-                Game game = new Game(players);
-                game.start();
-            }).start();
+    @Override
+    public void removePlayer(User user) {
+        UsersData.updateStateByUsername(user.getUsername(), -1L, UserState.NONE);
+        Iterator<Player> iterator = iterator();
+        while (iterator.hasNext()) {
+            Player p = iterator.next();
+            if (p.getUser().equals(user)) {
+                iterator.remove();
+                break;
+            }
         }
+    }
+
+    @Override
+    public boolean containsUser(User user) {
+        for (Player player : queue) {
+            if (player.getUser().equals(user)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Optional<Player> getPlayerByUser(User user) {
+        for (Player player : queue) {
+            if (player.getUser().equals(user)) {
+                return Optional.of(player);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -63,4 +83,20 @@ public class SimpleQueue implements GameQueue {
     public Iterator<Player> iterator() {
         return queue.iterator();
     }
+
+    @Override
+    public Player peek() {
+        return queue.peek();
+    }
+
+    @Override
+    public Player poll() {
+        return queue.poll();
+    }
+
+    @Override
+    public boolean offer(Player player) {
+        return queue.offer(player);
+    }
+
 }

@@ -36,6 +36,9 @@ public class GameChecker {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            Thread game = new Thread(new Game(players));
+            game.start();
+
         } else {
             System.out.println("Matchmaking aborted due to disconnected player");
             try {

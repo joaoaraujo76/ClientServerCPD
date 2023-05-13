@@ -1,5 +1,8 @@
 package client.states;
 
+import protocol.Message;
+
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
@@ -21,10 +24,22 @@ public class GameState implements ClientState {
     public ClientState execute() {
         System.out.println("IN GAME\n");
         try {
-            Thread.sleep(60 * 1000); // 1 min
-        } catch (InterruptedException e) {
+            Message message = (Message) input.readObject();
+
+            switch (message.getType()) {
+                case END_GAME -> {
+                    System.out.println(message.getMessage());
+                    return new MainMenuState(token, scanner, input, output);
+                }
+
+                default -> {
+                    System.out.println(message.getMessage());
+                    return this;
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
-        return this;
     }
 }

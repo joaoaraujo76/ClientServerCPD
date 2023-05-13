@@ -7,6 +7,7 @@ import server.models.UserState;
 import server.queues.GameQueue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static server.data.UsersData.updateStateByUsername;
@@ -51,5 +52,13 @@ public class GameChecker {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static void checkForGameStart(GameQueue queue) {
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            players.add(queue.remove());
+        }
+        check(players, queue);
     }
 }

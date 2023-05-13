@@ -23,7 +23,7 @@ public class Game implements Runnable {
     @Override
     public void run() {
         try {
-            Thread.sleep(5 * 1000);
+            Thread.sleep(30 * 1000);
 
             Player playerOne = players.get(0);
             Player playerTwo = players.get(1);
@@ -37,6 +37,7 @@ public class Game implements Runnable {
             updateStateByUsername(playerOne.getUser().getUsername(), -1L, UserState.NONE);
             updateStateByUsername(playerTwo.getUser().getUsername(), -1L, UserState.NONE);
 
+            System.out.println("Game ended. " + playerOne.getUser().getUsername() + " won");
             playerOne.getOutputStream().writeObject(new Message(MessageType.END_GAME, playerOne.getUser().getToken(), "Game ended. You won!"));
             playerOne.getOutputStream().flush();
 

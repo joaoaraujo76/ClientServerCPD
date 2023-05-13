@@ -22,4 +22,6 @@ public interface GameQueue {
     Player poll();
 
     boolean offer(Player player);
+
+    Player remove();
 }

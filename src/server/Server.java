@@ -26,13 +26,15 @@ public class Server {
 
             System.out.println("Server is listening on port " + port +"\n") ;
 
+            executor.submit(new QueueTimeoutChecker(HighEloQueue.getInstance(), MediumEloQueue.getInstance(), 2));
+            executor.submit(new QueueTimeoutChecker(MediumEloQueue.getInstance(), LowEloQueue.getInstance(), 1));
+
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected from " + clientSocket.getInetAddress());
 
                 executor.submit(new ConnectionHandler(clientSocket));
-                executor.submit(new QueueTimeoutChecker(HighEloQueue.getInstance(), MediumEloQueue.getInstance(), 2));
-                executor.submit(new QueueTimeoutChecker(MediumEloQueue.getInstance(), LowEloQueue.getInstance(), 1));
+
             }
 
         } catch (SocketException ex) {

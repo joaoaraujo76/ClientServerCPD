@@ -2,14 +2,13 @@ package server.queues;
 
 import server.data.UsersData;
 import server.models.Player;
+import server.models.User;
 import server.models.UserState;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 import static server.data.UsersData.updateStateByUsername;
+import static server.queues.QueueTimeoutChecker.checkForGameStart;
 
 public final class HighEloQueue implements GameQueue {
     private static volatile HighEloQueue instance;
@@ -34,19 +33,41 @@ public final class HighEloQueue implements GameQueue {
     public void add(Player player, Long time) {
         queue.add(player);
         updateStateByUsername(player.getUser().getUsername(), time, UserState.QUEUE);
+        if (queue.size() >= 2) {
+            checkForGameStart(getInstance());
+        }
     }
 
     @Override
-    public void removePlayer(Player player) {
-        UsersData.updateStateByUsername(player.getUser().getUsername(), -1L, UserState.NONE);
+    public void removePlayer(User user) {
+        UsersData.updateStateByUsername(user.getUsername(), -1L, UserState.NONE);
         Iterator<Player> iterator = iterator();
         while (iterator.hasNext()) {
             Player p = iterator.next();
-            if (p.equals(player)) {
+            if (p.getUser().equals(user)) {
                 iterator.remove();
                 break;
             }
         }
+    }
+
+    @Override
+    public boolean containsUser(User user) {
+        for (Player player : queue) {
+            if (player.getUser().equals(user)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Optional<Player> getPlayerByUser(User user) {
+        for (Player player : queue) {
+            if (player.getUser().equals(user)) {
+                return Optional.of(player);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

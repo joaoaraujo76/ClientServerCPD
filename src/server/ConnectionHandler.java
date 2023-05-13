@@ -47,7 +47,7 @@ public class ConnectionHandler implements Runnable {
                         }
 
                         case LOGIN_TOKEN -> {
-                            Command loginTokenCommand = new LoginTokenCommand(message, output);
+                            Command loginTokenCommand = new LoginTokenCommand(message, input, output, clientSocket);
                             loginTokenCommand.execute();
                         }
 
@@ -63,7 +63,7 @@ public class ConnectionHandler implements Runnable {
                     }
                 }
             }
-        } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | ParseException e) {
+        } catch (IOException | ClassNotFoundException | ParseException e) {
             // TODO: handle exceptions;
         }
     }

@@ -18,7 +18,7 @@ public class RegisterCommand implements Command {
     }
 
     @Override
-    public void execute() throws IOException, NoSuchAlgorithmException {
+    public void execute() {
         String username = message.getUsername();
         String password = message.getPassword();
         String token = message.getToken();
@@ -26,14 +26,18 @@ public class RegisterCommand implements Command {
         System.out.println("Register -----------");
         System.out.println("Username: " + username);
 
-        if (UserAuthenticator.register(username, password)) {
-            System.out.println("Registration succeeded");
-            output.writeObject(new Message(MessageType.REGISTERED, token, "Registration successful."));
-            output.flush();
-        } else {
-            System.out.println("Registration failed");
-            output.writeObject(new Message(MessageType.ERROR, token, "Registration failed, Username already exists."));
-            output.flush();
+        try {
+            if (UserAuthenticator.register(username, password)) {
+                System.out.println("Registration succeeded");
+                output.writeObject(new Message(MessageType.REGISTERED, token, "Registration successful."));
+                output.flush();
+            } else {
+                System.out.println("Registration failed");
+                output.writeObject(new Message(MessageType.ERROR, token, "Registration failed, Username already exists."));
+                output.flush();
+            }
+        } catch (IOException | NoSuchAlgorithmException e) {
+            // TODO: handle exceptions;
         }
     }
 }

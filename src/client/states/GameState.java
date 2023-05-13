@@ -25,6 +25,6 @@ public class GameState implements ClientState {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return this;
     }
 }

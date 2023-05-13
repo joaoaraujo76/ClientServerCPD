@@ -10,7 +10,8 @@ public enum MessageType {
     JOIN_SIMPLE_QUEUE,
     JOIN_RANKED_QUEUE,
     QUEUED,
-    RESUME,
+    RESUME_QUEUE,
+    RESUME_GAME,
     START_GAME,
     END_GAME,
     ERROR

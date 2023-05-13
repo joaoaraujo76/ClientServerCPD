@@ -24,7 +24,7 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute() {
         String username = message.getUsername();
         String password = message.getPassword();
         String token = message.getToken();
@@ -40,12 +40,21 @@ public class LoginCommand implements Command {
             Optional<User> userOptional = UsersRepository.getUserByName(username);
             userOptional.ifPresent(user -> {
                 try {
-                    if (user.getState().equals(UserState.QUEUE)) {
-                        output.writeObject(new Message(MessageType.RESUME, newToken, "Login successful. You are already queued into a game"));
-                        output.flush();
-                    } else {
-                        output.writeObject(new Message(MessageType.AUTHENTICATED, newToken, "Login successful."));
-                        output.flush();
+                    switch (user.getState()) {
+                        case QUEUE -> {
+                            output.writeObject(new Message(MessageType.RESUME_QUEUE, newToken, "Login successful. You are already queued into a game"));
+                            output.flush();
+                        }
+
+                        case GAME -> {
+                            output.writeObject(new Message(MessageType.RESUME_GAME, newToken, "Login successful. Resuming game"));
+                            output.flush();
+                        }
+
+                        default -> {
+                            output.writeObject(new Message(MessageType.AUTHENTICATED, newToken, "Login successful."));
+                            output.flush();
+                        }
                     }
                 } catch(IOException e){
                     // TODO: handle exceptions;
@@ -53,8 +62,12 @@ public class LoginCommand implements Command {
             });
         } else {
             System.out.println("Authenticated failed");
-            output.writeObject(new Message(MessageType.ERROR, token, "Login failed, Username or password incorrect."));
-            output.flush();
+            try {
+                output.writeObject(new Message(MessageType.ERROR, token, "Login failed, Username or password incorrect."));
+                output.flush();
+            } catch (IOException e) {
+                // TODO: handle exceptions;
+            }
         }
     }
 

@@ -40,8 +40,8 @@ public class GameChecker {
             System.out.println("Matchmaking aborted due to disconnected player");
             try {
                 for (Player player : players) {
-                    updateStateByUsername(player.getUser().getUsername(), -1L, UserState.GAME);
-                    player.getOutputStream().writeObject(new Message(MessageType.ERROR, player.getUser().getToken(), "One user disconnected, returning to main menu"));
+                    updateStateByUsername(player.getUser().getUsername(), -1L, UserState.NONE);
+                    player.getOutputStream().writeObject(new Message(MessageType.ERROR, player.getUser().getToken(), "Matchmaking aborted. Returning to main menu"));
                     player.getOutputStream().flush();
                 }
             } catch (IOException e) {

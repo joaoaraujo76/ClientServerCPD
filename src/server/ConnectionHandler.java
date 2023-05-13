@@ -10,7 +10,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.text.ParseException;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 public class ConnectionHandler implements Runnable {
     private final Socket clientSocket;
@@ -59,6 +58,11 @@ public class ConnectionHandler implements Runnable {
                         case JOIN_SIMPLE_QUEUE -> {
                             Command joinSimpleQueueCommand = new JoinSimpleQueueCommand(message, input, output, clientSocket);
                             joinSimpleQueueCommand.execute();
+                        }
+
+                        case CHANGE_PASSWORD -> {
+                            Command changePasswordCommand = new ChangePasswordCommand(message, output);
+                            changePasswordCommand.execute();
                         }
                     }
                 }

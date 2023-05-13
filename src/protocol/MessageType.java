@@ -3,6 +3,8 @@ package protocol;
 public enum MessageType {
     REGISTER,
     REGISTERED,
+    CHANGE_PASSWORD,
+    PASSWORD_CHANGED,
     LOGIN,
     LOGIN_TOKEN,
     AUTHENTICATED,

@@ -15,6 +15,8 @@ public class MainMenuState implements ClientState {
     private final ObjectOutputStream output;
     private static final String SIMPLE_QUEUE = "s";
     private static final String RANKED_QUEUE = "r";
+    private static final String CHANGE_PASSWORD = "p";
+
 
     public MainMenuState(String token, Scanner scanner, ObjectInputStream input, ObjectOutputStream output) {
         this.token = token;
@@ -27,6 +29,8 @@ public class MainMenuState implements ClientState {
     public ClientState execute() {
         System.out.println("MAIN MENU\n");
         System.out.println("Do you want to queue into simple or ranked play? (s/r) ");
+        System.out.println("Do you want to change password? (p) ");
+
         String option = scanner.nextLine();
 
         switch (option) {
@@ -51,6 +55,33 @@ public class MainMenuState implements ClientState {
                     //TODO: handle exceptions
                 }
                 return new WaitingGameState(token, scanner, input, output);
+            }
+            case CHANGE_PASSWORD -> {
+                System.out.println("Change password -----------");
+
+                String password;
+                String passwordValidator;
+
+                while(true) {
+                    System.out.print("New password: ");
+                    password = scanner.nextLine();
+                    System.out.print("Confirm new password: ");
+                    passwordValidator = scanner.nextLine();
+
+                    if(!password.equals(passwordValidator)) {
+                        System.out.println("Passwords do not match");
+                    } else break;
+                }
+
+                try {
+                    output.writeObject(new Message(MessageType.CHANGE_PASSWORD, token, password));
+                    output.flush();
+
+                    System.out.println(((Message) input.readObject()).getMessage());
+                } catch (IOException | ClassNotFoundException e) {
+                    //TODO: handle exceptions
+                }
+                return this;
             }
             default -> {
                 System.out.println("Invalid option. Please try again.");

@@ -29,7 +29,7 @@ public class UserAuthenticator implements Authenticator {
         return addUser(new User(username, hashPassword(password)));
     }
 
-    private static String hashPassword(String password) throws NoSuchAlgorithmException {
+    public static String hashPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hashedBytes = md.digest(password.getBytes());
         StringBuilder sb = new StringBuilder();

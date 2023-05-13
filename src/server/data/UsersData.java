@@ -180,4 +180,40 @@ public class UsersData {
             e.printStackTrace();
         }
     }
+
+    public synchronized static void updatePasswordByUsername(String username, String password) {
+        try {
+            File file = new File(DATA_FILE);
+            Scanner scanner = new Scanner(file);
+
+            List<String> updatedUsers = new ArrayList<>();
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] fields = line.split(",");
+
+                if (fields[0].equals(username)) {
+                    fields[1] = String.valueOf(password);
+                    line = String.join(",", fields);
+                }
+                updatedUsers.add(line);
+            }
+
+            scanner.close();
+
+            FileWriter writer = new FileWriter(file);
+
+            for (String line : updatedUsers) {
+                writer.write(line + "\n");
+            }
+
+            writer.close();
+
+            UsersRepository.getUserByName(username).ifPresent(u ->
+                    u.setHashedPassword(password));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

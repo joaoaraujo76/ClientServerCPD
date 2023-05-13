@@ -16,8 +16,10 @@ import static server.data.UsersData.updateStateByUsername;
 public class Game implements Runnable {
 
     private final List<Player> players;
-    public Game(List<Player> players) {
+    private final String gameType;
+    public Game(List<Player> players, String gameType) {
         this.players = players;
+        this.gameType = gameType;
     }
 
     @Override
@@ -31,8 +33,10 @@ public class Game implements Runnable {
             int playerOneElo = playerOne.getUser().getElo();
             int playerTwoElo = playerTwo.getUser().getElo();
 
-            updateEloByUsername(playerOne.getUser().getUsername(), playerOneElo + 50);
-            updateEloByUsername(playerTwo.getUser().getUsername(), playerTwoElo - 50);
+            if(gameType.equals("RANKED")) {
+                updateEloByUsername(playerOne.getUser().getUsername(), playerOneElo + 50);
+                updateEloByUsername(playerTwo.getUser().getUsername(), playerTwoElo - 50);
+            }
 
             updateStateByUsername(playerOne.getUser().getUsername(), -1L, UserState.NONE);
             updateStateByUsername(playerTwo.getUser().getUsername(), -1L, UserState.NONE);

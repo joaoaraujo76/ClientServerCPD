@@ -5,6 +5,7 @@ import protocol.MessageType;
 import server.models.Player;
 import server.models.UserState;
 import server.queues.GameQueue;
+import server.queues.SimpleQueue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +38,14 @@ public class GameChecker {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            Thread game = new Thread(new Game(players));
+
+            String gameType;
+            if (queue.getClass().equals(SimpleQueue.class)) {
+                gameType = "UNRANKED";
+            } else {
+                gameType = "RANKED";
+            }
+            Thread game = new Thread(new Game(players, gameType));
             game.start();
 
         } else {

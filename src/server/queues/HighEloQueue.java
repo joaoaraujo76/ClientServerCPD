@@ -8,7 +8,7 @@ import server.models.UserState;
 import java.util.*;
 
 import static server.data.UsersData.updateStateByUsername;
-import static server.queues.QueueTimeoutChecker.checkForGameStart;
+import static server.game.GameChecker.checkForGameStart;
 
 public final class HighEloQueue implements GameQueue {
     private static volatile HighEloQueue instance;
@@ -98,5 +98,10 @@ public final class HighEloQueue implements GameQueue {
     @Override
     public boolean offer(Player player) {
         return queue.offer(player);
+    }
+
+    @Override
+    public Player remove() {
+        return queue.remove();
     }
 }

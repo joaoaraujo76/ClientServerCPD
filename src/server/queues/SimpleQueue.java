@@ -8,7 +8,7 @@ import server.models.UserState;
 import java.util.*;
 
 import static server.data.UsersData.updateStateByUsername;
-import static server.queues.QueueTimeoutChecker.checkForGameStart;
+import static server.game.GameChecker.checkForGameStart;
 
 public class SimpleQueue implements GameQueue {
     private static volatile SimpleQueue instance;
@@ -99,4 +99,8 @@ public class SimpleQueue implements GameQueue {
         return queue.offer(player);
     }
 
+    @Override
+    public Player remove() {
+        return queue.remove();
+    }
 }

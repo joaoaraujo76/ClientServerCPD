@@ -16,6 +16,7 @@ public class MainMenuState implements ClientState {
     private static final String SIMPLE_QUEUE = "s";
     private static final String RANKED_QUEUE = "r";
     private static final String CHANGE_PASSWORD = "p";
+    private static final String SEE_ELO = "e";
 
 
     public MainMenuState(String token, Scanner scanner, ObjectInputStream input, ObjectOutputStream output) {
@@ -27,13 +28,16 @@ public class MainMenuState implements ClientState {
 
     @Override
     public ClientState execute() {
-        System.out.println("MAIN MENU\n");
+
+        System.out.println("\nMain Menu");
+        System.out.println("-----------");
         System.out.println("Do you want to queue into simple or ranked play? (s/r) ");
         System.out.println("Do you want to change password? (p) ");
+        System.out.println("Do you want to see your Elo? (e) ");
 
         String option = scanner.nextLine();
 
-        switch (option) {
+        switch (option.toLowerCase()) {
             case SIMPLE_QUEUE -> {
                 try {
                     output.writeObject(new Message(MessageType.JOIN_SIMPLE_QUEUE, token));
@@ -83,6 +87,21 @@ public class MainMenuState implements ClientState {
                 }
                 return this;
             }
+
+            case SEE_ELO -> {
+
+                try {
+                    output.writeObject(new Message(MessageType.SEE_ELO, token));
+                    output.flush();
+
+                    System.out.println(((Message) input.readObject()).getMessage());
+                } catch (IOException | ClassNotFoundException e) {
+                    //TODO: handle exceptions
+                }
+
+                return this;
+            }
+
             default -> {
                 System.out.println("Invalid option. Please try again.");
                 return this;

@@ -64,6 +64,11 @@ public class ConnectionHandler implements Runnable {
                             Command changePasswordCommand = new ChangePasswordCommand(message, output);
                             changePasswordCommand.execute();
                         }
+
+                        case SEE_ELO -> {
+                            Command seeElo = new SeeEloCommand(message,output);
+                            seeElo.execute();
+                        }
                     }
                 }
             }

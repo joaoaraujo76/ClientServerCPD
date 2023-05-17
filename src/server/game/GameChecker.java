@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static server.data.UsersData.updateStateByUsername;
+import static server.data.GameData.gameConstants.MAX_PLAYERS;
 
 public class GameChecker {
 
@@ -64,7 +65,7 @@ public class GameChecker {
 
     public static void checkForGameStart(GameQueue queue) {
         List<Player> players = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < MAX_PLAYERS; i++) {
             players.add(queue.remove());
         }
         check(players, queue);

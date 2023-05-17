@@ -5,6 +5,9 @@ public enum MessageType {
     REGISTERED,
     CHANGE_PASSWORD,
     PASSWORD_CHANGED,
+
+    SEE_ELO,
+
     LOGIN,
     LOGIN_TOKEN,
     AUTHENTICATED,

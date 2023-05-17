@@ -9,6 +9,7 @@ import java.util.*;
 
 import static server.data.UsersData.updateStateByUsername;
 import static server.game.GameChecker.checkForGameStart;
+import static server.data.GameData.gameConstants.MAX_PLAYERS;
 
 public final class MediumEloQueue implements GameQueue {
     private static volatile MediumEloQueue instance;
@@ -33,7 +34,7 @@ public final class MediumEloQueue implements GameQueue {
     public void add(Player player, Long time) {
         queue.add(player);
         updateStateByUsername(player.getUser().getUsername(), time, UserState.QUEUE);
-        if (queue.size() >= 2) {
+        if (queue.size() >= MAX_PLAYERS) {
             checkForGameStart(getInstance());
         }
     }

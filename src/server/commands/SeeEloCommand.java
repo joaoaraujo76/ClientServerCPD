@@ -42,9 +42,7 @@ public class SeeEloCommand implements Command {
 
                 Integer elo = u.getElo();
 
-                System.out.println("Init");
                 System.out.println("Elo: " + elo);
-                System.out.println("End");
 
                 String Diffuculty;
 

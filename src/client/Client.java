@@ -26,6 +26,7 @@ public class Client {
                 state = state.execute();
             }
         } catch (IOException e) {
+            System.out.println("Server is not working");
             //TODO: handle exceptions
         }
     }

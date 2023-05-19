@@ -1,10 +1,10 @@
 package server.repository;
 
+import server.models.Player;
 import server.models.User;
+import server.queues.*;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 public class UsersRepository implements Repository<User> {
@@ -30,5 +30,35 @@ public class UsersRepository implements Repository<User> {
             }
         }
         return Optional.empty();
+    }
+
+    public static void updatePlayer(Player player) {
+        User user = player.getUser();
+        GameQueue queue = getQueueForUser(user);
+
+        if (queue != null) {
+            Long queueJoinTime = queue.getPlayerByUser(user)
+                    .map(Player::getQueueJoinTime)
+                    .orElse(null);
+
+            queue.removePlayer(player.getUser());
+            queue.add(player, queueJoinTime);
+        }
+    }
+
+    private static GameQueue getQueueForUser(User user) {
+        List<GameQueue> queues = Arrays.asList(
+                HighEloQueue.getInstance(),
+                MediumEloQueue.getInstance(),
+                LowEloQueue.getInstance(),
+                SimpleQueue.getInstance()
+        );
+
+        for(GameQueue queue: queues) {
+            if (queue.containsUser(user)) {
+                return queue;
+            }
+        }
+        return null;
     }
 }

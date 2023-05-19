@@ -4,7 +4,6 @@ import protocol.Message;
 import protocol.MessageType;
 import server.models.Player;
 import server.models.User;
-import server.queues.*;
 import server.repository.UsersRepository;
 import server.authenticator.UserAuthenticator;
 
@@ -12,9 +11,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
+
+import static server.repository.UsersRepository.updatePlayer;
 
 public class LoginTokenCommand implements Command {
     private final Message message;
@@ -51,9 +50,6 @@ public class LoginTokenCommand implements Command {
                         }
 
                         case GAME -> {
-                            Player updatedPlayer = new Player(user, socket, input, output);
-                            updatePlayer(updatedPlayer);
-
                             output.writeObject(new Message(MessageType.RESUME_GAME, token, "Token login successful. Resuming you into the game"));
                             output.flush();
                         }
@@ -77,35 +73,5 @@ public class LoginTokenCommand implements Command {
         } catch (IOException e) {
             // TODO: handle exceptions;
         }
-    }
-
-    public void updatePlayer(Player player) {
-        User user = player.getUser();
-        GameQueue queue = getQueueForUser(user);
-
-        if (queue != null) {
-            Long queueJoinTime = queue.getPlayerByUser(user)
-                    .map(Player::getQueueJoinTime)
-                    .orElse(null);
-
-            queue.removePlayer(player.getUser());
-            queue.add(player, queueJoinTime);
-        }
-    }
-
-    private GameQueue getQueueForUser(User user) {
-        List<GameQueue> queues = Arrays.asList(
-                HighEloQueue.getInstance(),
-                MediumEloQueue.getInstance(),
-                LowEloQueue.getInstance(),
-                SimpleQueue.getInstance()
-        );
-
-        for(GameQueue queue: queues) {
-            if (queue.containsUser(user)) {
-                return queue;
-            }
-        }
-        return null;
     }
 }

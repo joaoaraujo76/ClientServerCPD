@@ -41,7 +41,7 @@ public class ConnectionHandler implements Runnable {
                         }
 
                         case LOGIN -> {
-                            Command loginCommand = new LoginCommand(message, output);
+                            Command loginCommand = new LoginCommand(message, input, output, clientSocket);
                             loginCommand.execute();
                         }
 

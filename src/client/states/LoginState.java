@@ -61,7 +61,6 @@ public class LoginState implements ClientState {
                     output.flush();
 
                     Message authResult = (Message) input.readObject();
-                    System.out.println(authResult.getMessage());
 
                     switch (authResult.getType()) {
                         case AUTHENTICATED -> {

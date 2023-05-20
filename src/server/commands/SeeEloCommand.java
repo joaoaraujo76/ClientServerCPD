@@ -33,22 +33,21 @@ public class SeeEloCommand implements Command {
 
                 System.out.println("Elo: " + elo);
 
-                String Diffuculty;
+                String Difficulty;
 
                 if (elo >= 2000) {
-                    Diffuculty = "Hard";
+                    Difficulty = "Hard";
                 } else if (elo >= 1500) {
-                    Diffuculty = "Medium";
+                    Difficulty = "Medium";
                 } else {
-                    Diffuculty = "Easy";
+                    Difficulty = "Easy";
                 }
 
-                System.out.println("Difficuly: " + Diffuculty);
+                System.out.println("Difficulty: " + Difficulty);
 
-                output.writeObject(new Message(MessageType.SEE_ELO, token, "Your Elo is: " + elo +  ". You are in " + Diffuculty + " level."));
+                output.writeObject(new Message(MessageType.SEE_ELO, token, "Your Elo is: " + elo +  ". You are in " + Difficulty + " level."));
                 output.flush();
             } catch (Exception e) {
-
                 //TODO: handle exception
             }
         });

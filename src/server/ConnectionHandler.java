@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class ConnectionHandler implements Runnable {
     private static final ExecutorService executor = Executors.newCachedThreadPool();
     private final Socket clientSocket;
-    private static final int SOCKET_TIMEOUT_MS = 10 * 60 * 1000; // 5min
+    private static final int SOCKET_TIMEOUT_MS = 10 * 60 * 1000; // 10min
 
     public ConnectionHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;

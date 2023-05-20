@@ -33,7 +33,6 @@ public class Server {
                 System.out.println("Client connected from " + clientSocket.getInetAddress());
 
                 executor.submit(new ConnectionHandler(clientSocket));
-
             }
 
         } catch (SocketException ex) {

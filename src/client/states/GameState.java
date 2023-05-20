@@ -5,6 +5,7 @@ import protocol.Message;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 public class GameState implements ClientState {
@@ -30,6 +31,11 @@ public class GameState implements ClientState {
                 case END_GAME -> {
                     System.out.println(message.getMessage());
                     return new MainMenuState(token, scanner, input, output);
+                }
+
+                case TIMEOUT -> {
+                    System.out.println(message.getMessage());
+                    throw new SocketTimeoutException();
                 }
 
                 default -> {

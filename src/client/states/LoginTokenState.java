@@ -4,6 +4,7 @@ import protocol.Message;
 import protocol.MessageType;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 import static client.TokenUtils.getClientToken;
@@ -45,6 +46,11 @@ public class LoginTokenState implements ClientState{
                 case RESUME_GAME -> {
                     System.out.println("Token Authentication succeeded. Returning to game");
                     return new GameState(token, scanner, input, output);
+                }
+
+                case TIMEOUT -> {
+                    System.out.println(message.getMessage());
+                    throw new SocketTimeoutException();
                 }
 
                 default -> {

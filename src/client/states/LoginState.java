@@ -4,6 +4,7 @@ import protocol.Message;
 import protocol.MessageType;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 import static client.TokenUtils.updateToken;
@@ -41,11 +42,23 @@ public class LoginState implements ClientState {
                     output.writeObject(new Message(MessageType.REGISTER, token, username, password));
                     output.flush();
 
-                    System.out.println(((Message) input.readObject()).getMessage());
+                    Message message = (Message) input.readObject();
+
+                    switch (message.getType()) {
+
+                        case TIMEOUT -> {
+                            System.out.println(message.getMessage());
+                            throw new SocketTimeoutException();
+                        }
+
+                        default -> {
+                            System.out.println(message.getMessage());
+                            return this;
+                        }
+                    }
                 } catch (IOException | ClassNotFoundException e) {
                     // TODO: handle exceptions
                 }
-                return this;
             }
 
             case LOGIN -> {
@@ -84,7 +97,13 @@ public class LoginState implements ClientState {
                             return new GameState(newToken, scanner, input, output);
                         }
 
+                        case TIMEOUT -> {
+                            System.out.println(authResult.getMessage());
+                            throw new SocketTimeoutException();
+                        }
+
                         default -> {
+                            System.out.println(authResult.getMessage());
                             return this;
                         }
                     }

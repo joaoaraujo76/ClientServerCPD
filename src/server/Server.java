@@ -25,7 +25,7 @@ public class Server {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server is listening on port " + port +"\n") ;
 
-            executor.submit(new QueueTimeoutChecker(HighEloQueue.getInstance(), MediumEloQueue.getInstance(), 2));
+            executor.submit(new QueueTimeoutChecker(HighEloQueue.getInstance(), MediumEloQueue.getInstance(), 1));
             executor.submit(new QueueTimeoutChecker(MediumEloQueue.getInstance(), LowEloQueue.getInstance(), 1));
 
             while (true) {
@@ -41,7 +41,7 @@ public class Server {
             System.out.println("Connection with client interrupted.");
         } catch (IOException ex) {
             ex.getStackTrace();
-            System.out.println("IO exception: " + ex.getMessage());
+            System.out.println("IO exception" + ex.getMessage());
         }
     }
 }

@@ -6,6 +6,7 @@ import protocol.MessageType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 public class MainMenuState implements ClientState {
@@ -43,22 +44,52 @@ public class MainMenuState implements ClientState {
                     output.writeObject(new Message(MessageType.JOIN_SIMPLE_QUEUE, token));
                     output.flush();
 
-                    System.out.println(((Message) input.readObject()).getMessage());
+                    Message message = (Message) input.readObject();
+                    switch (message.getType()) {
+
+                        case TIMEOUT -> {
+                            System.out.println(message.getMessage());
+                            throw new SocketTimeoutException();
+                        }
+
+                        case QUEUED -> {
+                            System.out.println(message.getMessage());
+                            return new WaitingGameState(token, scanner, input, output);
+                        }
+
+                        default -> {
+                            return this;
+                        }
+                    }
                 } catch (IOException | ClassNotFoundException e) {
                     //TODO: handle exceptions
                 }
-                return new WaitingGameState(token, scanner, input, output);
             }
             case RANKED_QUEUE -> {
                 try {
                     output.writeObject(new Message(MessageType.JOIN_RANKED_QUEUE, token));
                     output.flush();
 
-                    System.out.println(((Message) input.readObject()).getMessage());
+                    Message message = (Message) input.readObject();
+                    switch (message.getType()) {
+
+                        case TIMEOUT -> {
+                            System.out.println(message.getMessage());
+                            throw new SocketTimeoutException();
+                        }
+
+                        case QUEUED -> {
+                            System.out.println(message.getMessage());
+                            return new WaitingGameState(token, scanner, input, output);
+                        }
+
+                        default -> {
+                            return this;
+                        }
+                    }
                 } catch (IOException | ClassNotFoundException e) {
                     //TODO: handle exceptions
                 }
-                return new WaitingGameState(token, scanner, input, output);
             }
             case CHANGE_PASSWORD -> {
                 System.out.println("Change password -----------");
@@ -81,31 +112,53 @@ public class MainMenuState implements ClientState {
                     output.writeObject(new Message(MessageType.CHANGE_PASSWORD, token, password));
                     output.flush();
 
-                    System.out.println(((Message) input.readObject()).getMessage());
+                    Message message = (Message) input.readObject();
+                    switch (message.getType()) {
+
+                        case TIMEOUT -> {
+                            System.out.println(message.getMessage());
+                            throw new SocketTimeoutException();
+                        }
+
+                        default -> {
+                            System.out.println(message.getMessage());
+                            return this;
+                        }
+                    }
                 } catch (IOException | ClassNotFoundException e) {
                     //TODO: handle exceptions
                 }
-                return this;
             }
-
             case SEE_ELO -> {
 
                 try {
                     output.writeObject(new Message(MessageType.SEE_ELO, token));
                     output.flush();
 
-                    System.out.println(((Message) input.readObject()).getMessage());
+                    Message message = (Message) input.readObject();
+                    switch (message.getType()) {
+
+                        case TIMEOUT -> {
+                            System.out.println(message.getMessage());
+                            throw new SocketTimeoutException();
+                        }
+
+                        default -> {
+                            System.out.println(message.getMessage());
+                            return this;
+                        }
+                    }
                 } catch (IOException | ClassNotFoundException e) {
                     //TODO: handle exceptions
                 }
-
-                return this;
             }
+
 
             default -> {
                 System.out.println("Invalid option. Please try again.");
                 return this;
             }
         }
+        return null;
     }
 }

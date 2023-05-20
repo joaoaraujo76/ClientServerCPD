@@ -17,7 +17,8 @@ public enum MessageType {
     RESUME_GAME,
     START_GAME,
     END_GAME,
-    ERROR
+    ERROR,
+    TIMEOUT
 }
 
 

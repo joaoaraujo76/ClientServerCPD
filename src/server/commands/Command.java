@@ -1,5 +1,3 @@
 package server.commands;
 
-public interface Command {
-    void execute();
-}
+public interface Command extends Runnable { }

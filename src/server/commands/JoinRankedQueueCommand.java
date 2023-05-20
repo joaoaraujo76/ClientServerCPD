@@ -15,11 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-
-import static server.game.GameChecker.check;
 
 public class JoinRankedQueueCommand implements Command {
     private final Message message;
@@ -35,7 +31,7 @@ public class JoinRankedQueueCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void run() {
         String token = message.getToken();
 
         Optional<User> userOptional = UsersRepository.getUserByToken(token);

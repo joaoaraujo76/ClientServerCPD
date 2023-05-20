@@ -29,11 +29,9 @@ public class LoginTokenCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void run() {
         String token = message.getToken();
-
         Optional<User> userOptional = UsersRepository.getUserByToken(token);
-
         try {
             if (userOptional.isPresent()) {
                 User user = userOptional.get();

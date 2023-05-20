@@ -18,7 +18,7 @@ public class RegisterCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void run() {
         String username = message.getUsername();
         String password = message.getPassword();
         String token = message.getToken();

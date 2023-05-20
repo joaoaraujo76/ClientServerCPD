@@ -22,7 +22,7 @@ public class ChangePasswordCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public void run() {
         String password = message.getMessage();
         String token = message.getToken();
 

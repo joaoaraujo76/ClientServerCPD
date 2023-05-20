@@ -10,8 +10,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.text.ParseException;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ConnectionHandler implements Runnable {
+    private static final ExecutorService executor = Executors.newCachedThreadPool();
     private final Socket clientSocket;
 
     public ConnectionHandler(Socket clientSocket) {
@@ -34,41 +37,13 @@ public class ConnectionHandler implements Runnable {
                     System.out.println("Token received: " + tokenClient);
 
                     switch (message.getType()) {
-
-                        case REGISTER -> {
-                            Command registerCommand = new RegisterCommand(message, output);
-                            registerCommand.execute();
-                        }
-
-                        case LOGIN -> {
-                            Command loginCommand = new LoginCommand(message, input, output, clientSocket);
-                            loginCommand.execute();
-                        }
-
-                        case LOGIN_TOKEN -> {
-                            Command loginTokenCommand = new LoginTokenCommand(message, input, output, clientSocket);
-                            loginTokenCommand.execute();
-                        }
-
-                        case JOIN_RANKED_QUEUE -> {
-                            Command joinRankedQueueCommand = new JoinRankedQueueCommand(message, input, output, clientSocket);
-                            joinRankedQueueCommand.execute();
-                        }
-
-                        case JOIN_SIMPLE_QUEUE -> {
-                            Command joinSimpleQueueCommand = new JoinSimpleQueueCommand(message, input, output, clientSocket);
-                            joinSimpleQueueCommand.execute();
-                        }
-
-                        case CHANGE_PASSWORD -> {
-                            Command changePasswordCommand = new ChangePasswordCommand(message, output);
-                            changePasswordCommand.execute();
-                        }
-
-                        case SEE_ELO -> {
-                            Command seeElo = new SeeEloCommand(message,output);
-                            seeElo.execute();
-                        }
+                        case REGISTER -> executor.submit(new RegisterCommand(message, output));
+                        case LOGIN -> executor.submit(new LoginCommand(message, input, output, clientSocket));
+                        case LOGIN_TOKEN -> executor.submit(new LoginTokenCommand(message, input, output, clientSocket));
+                        case JOIN_RANKED_QUEUE -> executor.submit(new JoinRankedQueueCommand(message, input, output, clientSocket));
+                        case JOIN_SIMPLE_QUEUE -> executor.submit(new JoinSimpleQueueCommand(message, input, output, clientSocket));
+                        case CHANGE_PASSWORD -> executor.submit(new ChangePasswordCommand(message, output));
+                        case SEE_ELO -> executor.submit(new SeeEloCommand(message, output));
                     }
                 }
             }

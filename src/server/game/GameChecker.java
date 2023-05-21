@@ -34,7 +34,6 @@ public class GameChecker {
 
         // If all players have responded, start the game
         if (checkedPlayers == players.size()) {
-
             //Create a new thread in the fixed thread pool
             gameExecutor.execute(() -> {
                 try {

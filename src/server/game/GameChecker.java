@@ -10,11 +10,16 @@ import server.queues.SimpleQueue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 import static server.data.UsersData.updateStateByUsername;
 import static server.data.GameData.gameConstants.MAX_PLAYERS;
 
 public class GameChecker {
+    private static final int MAX_ACTIVE_GAMES = 5;
+    private static final ExecutorService gameExecutor = Executors.newFixedThreadPool(MAX_ACTIVE_GAMES);
 
     public synchronized static void check(List<Player> players, GameQueue queue) {
         int checkedPlayers = 0;
@@ -46,8 +51,17 @@ public class GameChecker {
             } else {
                 gameType = "RANKED";
             }
-            Thread game = new Thread(new Game(players, gameType));
-            game.start();
+
+            //Create a new thread in the fixed thread pool
+            gameExecutor.execute(() -> {
+                try {
+                    new Game(players, gameType).run();
+                } catch (Exception e) {
+                    // Handle any exceptions thrown during the game
+                    System.out.println("Max amount of game threads reached.");
+                    e.printStackTrace();
+                }
+            });
 
         } else {
             System.out.println("Matchmaking aborted due to disconnected player");

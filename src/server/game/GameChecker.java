@@ -34,27 +34,28 @@ public class GameChecker {
 
         // If all players have responded, start the game
         if (checkedPlayers == players.size()) {
-            System.out.println("Starting game");
-            try {
-                for (Player player : players) {
-                    updateStateByUsername(player.getUser().getUsername(), -1L, UserState.GAME);
-                    player.getOutputStream().writeObject(new Message(MessageType.START_GAME, player.getUser().getToken(), "Starting the game"));
-                    player.getOutputStream().flush();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            String gameType;
-            if (queue.getClass().equals(SimpleQueue.class)) {
-                gameType = "UNRANKED";
-            } else {
-                gameType = "RANKED";
-            }
 
             //Create a new thread in the fixed thread pool
             gameExecutor.execute(() -> {
                 try {
+                    System.out.println("Starting game");
+                    try {
+                        for (Player player : players) {
+                            updateStateByUsername(player.getUser().getUsername(), -1L, UserState.GAME);
+                            player.getOutputStream().writeObject(new Message(MessageType.START_GAME, player.getUser().getToken(), "Starting the game"));
+                            player.getOutputStream().flush();
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    String gameType;
+                    if (queue.getClass().equals(SimpleQueue.class)) {
+                        gameType = "UNRANKED";
+                    } else {
+                        gameType = "RANKED";
+                    }
+
                     new Game(players, gameType).run();
                 } catch (Exception e) {
                     // Handle any exceptions thrown during the game
